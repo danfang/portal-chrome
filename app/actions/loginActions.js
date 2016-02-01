@@ -1,10 +1,11 @@
-import { portalAPIEndpoint } from './const';
+import { portalAPIEndpoint } from '../const';
 
 // Action constants
 export const GOOGLE_LOGIN = 'GOOGLE_LOGIN';
 export const GOOGLE_LOGIN_ERROR = 'GOOGLE_LOGIN_ERROR';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const SIGN_OUT = 'SIGN_OUT';
+export const RESTORE_STORE = 'RESTORE_STORE';
 
 // Login endpoint
 const loginEndpoint = portalAPIEndpoint + 'login/google';
@@ -95,7 +96,7 @@ function successfulLogin(credentials) {
 }
 
 function restoreStore(store = {}) {
-  return { type: 'RESTORE_STORE', store: store };
+  return { type: RESTORE_STORE, store: store };
 }
 
 export function signOut() {

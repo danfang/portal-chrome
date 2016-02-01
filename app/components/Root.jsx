@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { initialize, googleSignIn, signOut } from '../actions'
+import { initialize, googleSignIn, signOut } from '../actions/loginActions'
 import App from './App'
 
 class Root extends Component {
