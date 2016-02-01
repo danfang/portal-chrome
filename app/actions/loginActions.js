@@ -1,11 +1,13 @@
-import { portalAPIEndpoint } from '../const';
+import { portalAPIEndpoint } from '../const'
+import { checkResponse } from './helpers'
 
 // Action constants
-export const GOOGLE_LOGIN = 'GOOGLE_LOGIN';
-export const GOOGLE_LOGIN_ERROR = 'GOOGLE_LOGIN_ERROR';
-export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-export const SIGN_OUT = 'SIGN_OUT';
-export const RESTORE_STORE = 'RESTORE_STORE';
+export const GOOGLE_LOGIN = 'GOOGLE_LOGIN'
+export const GOOGLE_LOGIN_ERROR = 'GOOGLE_LOGIN_ERROR'
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
+export const SIGN_OUT = 'SIGN_OUT'
+export const RESTORE_LOGIN_STATUS = 'RESTORE_LOGIN_STATUS'
+export const MISSING_CREDENTIALS = 'MISSING_CREDENTIALS'
 
 // Login endpoint
 const loginEndpoint = portalAPIEndpoint + 'login/google';
@@ -24,23 +26,6 @@ const url = 'https://accounts.google.com/o/oauth2/auth' +
             '&redirect_uri=' + redirectUri +
             '&scope=' + scopes;
 
-export function initialize() {
-  return (dispatch) => {
-      chrome.storage.local.get(['store'], (result) => {
-        if (!result.store) {
-          dispatch(googleSignIn());
-          Promise.resolve();
-          return;
-        }
-        dispatch(restoreStore(result.store));
-        if (!result.store.appStatus.credentials) {
-          dispatch(googleSignIn());
-        }
-        Promise.resolve();
-      })
-  }
-}
-
 export function googleSignIn() {
   return (dispatch) => {
     dispatch(initiateGoogleLogin());
@@ -49,12 +34,17 @@ export function googleSignIn() {
       if (chrome.runtime.lastError) {
         dispatch(googleLoginError());
         Promise.resolve();
+        return;
       }
       let idToken = redirect.split('#', 2)[1].split('=')[1];
       dispatch(authenticateUser(idToken));
       Promise.resolve();
     });
   }
+}
+
+export function signOut() {
+  return { type: SIGN_OUT };
 }
 
 function authenticateUser(idToken) {
@@ -66,21 +56,11 @@ function authenticateUser(idToken) {
       })
     })
     .then(checkResponse)
-    .then(response => response.json())
-    .then(json => dispatch(successfulLogin({
-      userToken: json.user_token,
-      userID: json.user_id
+    .then(response => dispatch(successfulLogin({
+      userToken: response.user_token,
+      userID: response.user_id
     })));
   }
-}
-
-function checkResponse(response) {
-  if (response.status >= 400) {
-    var error = response.statusText;
-    error.body = response.json();
-    throw error;
-  }
-  return response;
 }
 
 function initiateGoogleLogin() {
@@ -96,9 +76,5 @@ function successfulLogin(credentials) {
 }
 
 function restoreStore(store = {}) {
-  return { type: RESTORE_STORE, store: store };
-}
-
-export function signOut() {
-  return { type: SIGN_OUT };
+  return { type: RESTORE_LOGIN_STATUS, store: store };
 }

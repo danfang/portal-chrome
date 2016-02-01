@@ -1,25 +1,28 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { initialize, googleSignIn, signOut } from '../actions/loginActions'
+import { googleSignIn, signOut } from '../actions/loginActions'
 import App from './App'
 
 class Root extends Component {
   componentDidMount() {
-    const { dispatch } = this.props
-    dispatch(initialize());
+    const { dispatch, loginStatus } = this.props
+    if (!loginStatus.credentials) {
+      dispatch(googleSignIn());
+    }
   }
   signInOnClick() {
     const { dispatch } = this.props;
     dispatch(googleSignIn())
   }
   render() {
-    const { dispatch, loggedIn, loginInProgress, loginError } = this.props;
+    const { dispatch, loginStatus } = this.props;
+    const { loggedIn, inProgress, error } = loginStatus;
     if (!loggedIn) {
       return <div id="login">
         <h1>Login to Portal</h1>
         <button onClick={(e) => this.signInOnClick(e)}>Sign in with Google</button>
-        { loginInProgress && <span>Logging in...</span> }
-        { loginError && <span>Error{loginError}</span>}
+        { inProgress && <span>Logging in...</span> }
+        { error && <span>Error: {error}</span>}
       </div>
     }
     return <App />
@@ -27,19 +30,21 @@ class Root extends Component {
 }
 
 Root.propTypes = {
+  loginStatus: PropTypes.shape({
     loggedIn: PropTypes.bool.isRequired,
-    loginInProgress: PropTypes.bool.isRequired,
-    loginError: PropTypes.string,
-    dispatch: PropTypes.func.isRequired
+    inProgress: PropTypes.bool.isRequired,
+    error: PropTypes.string,
+    credentials: PropTypes.shape({
+      userToken: PropTypes.string,
+      userID: PropTypes.string
+    })
+  }),
+  dispatch: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state) {
-  const { loginStatus, appStatus } = state;
-  return {
-    loggedIn: loginStatus.loggedIn,
-    loginInProgress: loginStatus.inProgress,
-    loginError: loginStatus.error
-  }
+  const { loginStatus } = state;
+  return { loginStatus: loginStatus }
 }
 
 export default connect(mapStateToProps)(Root);
