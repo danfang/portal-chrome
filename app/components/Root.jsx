@@ -4,12 +4,6 @@ import { googleSignIn, signOut } from '../actions/loginActions'
 import App from './App'
 
 class Root extends Component {
-  componentDidMount() {
-    const { dispatch, loginStatus } = this.props
-    if (!loginStatus.credentials) {
-      dispatch(googleSignIn());
-    }
-  }
   signInOnClick() {
     const { dispatch } = this.props;
     dispatch(googleSignIn())
@@ -19,8 +13,8 @@ class Root extends Component {
     const { loggedIn, inProgress, error } = loginStatus;
     if (!loggedIn) {
       return <div id="login">
-        <h1>Login to Portal</h1>
-        <button onClick={(e) => this.signInOnClick(e)}>Sign in with Google</button>
+        <h1>Portal</h1>
+        <div className="btn-sign-in" onClick={(e) => this.signInOnClick(e)}></div>
         { inProgress && <span>Logging in...</span> }
         { error && <span>Error: {error}</span>}
       </div>

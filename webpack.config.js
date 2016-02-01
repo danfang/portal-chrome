@@ -30,7 +30,11 @@ module.exports = {
         },
       },
       {
-        test: /\.sass$/,
+        test: /\.png$/,
+        loader: 'file?name=assets/[name].[ext]'
+      },
+      {
+        test: /\.scss$/,
         loaders: ['style', 'css', 'sass']
       }
     ]
@@ -42,4 +46,3 @@ module.exports = {
     })
   ]
 };
-

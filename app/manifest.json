@@ -9,7 +9,7 @@
       "scripts": ["main.js"]
     }
   },
-  "permissions": ["identity", "gcm", "storage", "https://dev.portalmessaging.com/*"],
+  "permissions": ["identity", "gcm", "storage", "https://dev.portalmessaging.com/*", "https://fonts.googleapis.com/"],
   "oauth2": {
     "client_id": "1045304436932-564pg9gi9lee05mg45frg7kigd7h5775.apps.googleusercontent.com",
     "scopes": ["profile", "email"]

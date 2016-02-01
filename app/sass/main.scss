@@ -1,0 +1,50 @@
+#root {
+  font-family: 'Source Sans Pro', sans-serif;
+
+  #login {
+    text-align: center;
+    margin-top: 200px;
+    h1 {
+      font-size: 5em;
+      font-weight: 300;
+      margin: 50px;
+    }
+    .btn-sign-in {
+      cursor: pointer;
+      background-image: url('../assets/btn_google_signin_light_normal_web@2x.png');
+      height: 92px;
+      width: 382px;
+      background-size: cover;
+      margin: auto;
+
+      &:hover {
+        background-image: url('../assets/btn_google_signin_light_pressed_web@2x.png');
+      }
+
+      &:focus {
+        background-image: url('../assets/btn_google_signin_light_focus_web@2x.png');
+      }
+    }
+  }
+
+  #app {
+    #threads {
+      float: left;
+      width: 30%;
+      min-width: 200px;
+
+      .thread {
+        padding: 25px 50px;
+      }
+    }
+
+    #messages {
+      float: right;
+      width: 70%;
+
+      .message {
+        padding: 25px 50px;
+      }
+    }
+  }
+}

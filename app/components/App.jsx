@@ -2,6 +2,8 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { signOut } from '../actions/loginActions'
 import { register } from '../actions/deviceActions'
+import Threads from './Threads'
+import Messages from './Messages'
 
 class App extends Component {
   componentDidMount() {
@@ -11,14 +13,20 @@ class App extends Component {
     }
   }
   signOutOnClick() {
+    const { dispatch } = this.props
     dispatch(signOut());
   }
   render() {
     const { dispatch, registered, registerInProgress, fetchingDevices, linkedDevices } = this.props
-    return <div>
-      <h1>Portal</h1>
-      <span>{ registered ? 'Connected' : (registerInProgress ? 'Registering device' : 'Unregistered device')  }</span>
-      <button onClick={(e) => this.signOutOnClick(e)}>Sign Out</button>
+    return <div id="app">
+      <div id="header">
+        <h1>Portal</h1>
+        <span>{ registered ? 'O' : (registerInProgress ? '+' : 'X')  }</span>
+        <button onClick={(e) => this.signOutOnClick(e)}>Sign Out</button>
+      </div>
+      <Threads />
+      <Messages />
+      <input type="text">Type a message</input>
     </div>
   }
 }
