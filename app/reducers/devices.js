@@ -1,15 +1,21 @@
 import * as types from '../actions/deviceActions'
+import { SIGN_OUT } from '../actions/loginActions'
 
-export default function(state = {
+let initialState = {
   registered: false,
   registerInProgress: false,
   notificationKey: null,
   encryptionKey: null,
   fetchingDevices: false,
   linkedDevices: []
-}, action) {
+}
+
+export default function(state = initialState, action) {
   const { type, notificationKey, encryptionKey, devices } = action;
   switch (type) {
+  case SIGN_OUT: {
+    return initialState
+  }
   case types.UNREGISTER_DEVICE:
     return Object.assign({}, state, {
       registered: false,
