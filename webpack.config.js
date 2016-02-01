@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 const PATHS = {
   app: path.join(__dirname, 'app'),
@@ -33,6 +34,12 @@ module.exports = {
         loaders: ['style', 'css', 'sass']
       }
     ]
-  }
+  },
+
+  plugins: [
+    new webpack.ProvidePlugin({
+      'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
+    })
+  ]
 };
 
