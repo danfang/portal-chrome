@@ -2,7 +2,7 @@
   @import './thread.scss';
   height: 100%;
   width: 25%;
-  min-width: 300px;
+  min-width: 150px;
   left: 0;
 
   #threads-header {
@@ -23,6 +23,7 @@
   #threads-body {
     overflow-y: scroll;
     margin: 0;
+    padding: 0;
     height: 100%;
   }
 }

@@ -9,7 +9,7 @@ export const FETCHING_DEVICES = 'FETCHING_DEVICES'
 export const FETCHED_DEVICES = 'FETCHED_DEVICES'
 export const REGISTRATION_ERROR = 'REGISTRATION_ERROR'
 
-const registrationEndpoint = portalAPIEndpoint + 'user/devices'
+const devicesEndpoint = portalAPIEndpoint + 'user/devices'
 
 export function register() {
   return (dispatch, getState) => {
@@ -31,25 +31,32 @@ export function register() {
         dispatch(sendRegistrationId(credentials, registrationId))
       });
     })
+  }
+}
 
+export function fetchDevices() {
+  return (dispatch, getState) => {
+    let credentials = getState().loginStatus.credentials
+    if (!credentials) {
+      dispatch(registrationError('missing credentials'))
+      Promise.resolve()
+      return
+    }
+    dispatch(fetchingDevices())
+    return fetch(devicesEndpoint, authenticatedRequest(credentials, 'GET'))
+    .then(checkResponse)
+    .then(response => dispatch(fetchedDevices(response.devices)))
   }
 }
 
 function sendRegistrationId(credentials, registrationId) {
   return (dispatch) => {
-    return fetch(registrationEndpoint, authenticatedRequest('POST', {
-      'name': 'Chrome Browser OSX',
+    return fetch(devicesEndpoint, authenticatedRequest(credentials, 'POST', {
+      'name': 'Chrome OSX',
       'registration_id': registrationId,
       'type': 'chrome'
-    }, credentials))
-    .then(response => {
-      if (response.status >= 400) {
-        var error = new Error(response.statusText)
-        dispatch(registrationError(response.json()))
-        throw error
-      }
-      return response.json()
-    })
+    }))
+    .then(checkResponse)
     .then(response => dispatch(registeredDevice({
       encryptionKey: response.encryption_key,
       notificationKey: response.notification_key
@@ -72,4 +79,12 @@ function registeredDevice(keys) {
 
 function registrationError(error) {
   return { type: REGISTRATION_ERROR, error: error }
+}
+
+function fetchingDevices() {
+  return { type: FETCHING_DEVICES }
+}
+
+function fetchedDevices(devices) {
+  return { type: FETCHED_DEVICES, devices }
 }

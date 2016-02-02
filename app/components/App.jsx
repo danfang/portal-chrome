@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { signOut } from '../actions/loginActions'
-import { register } from '../actions/deviceActions'
+import { register, fetchDevices } from '../actions/deviceActions'
 import Threads from './Threads'
 import Messages from './Messages'
 import Header from './Header'
@@ -13,12 +13,13 @@ class App extends Component {
     if (!registered) {
       dispatch(register())
     }
-    componentHandler.upgradeDom()
+    dispatch(fetchDevices())
+    componentHandler.upgradeAllRegistered()
   }
   render() {
     const { dispatch } = this.props
     return <div id="app" refs="app" className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-      <Header { ...this.props } signOutOnClick={() => dispatch(signOut())} />
+      <Header { ...this.props } />
       <Menu { ...this.props } signOutOnClick={() => dispatch(signOut())} />
       <main className="mdl-layout__content">
         <div className="page-content">
@@ -37,7 +38,14 @@ App.PropTypes = {
   registerInProgress: PropTypes.bool.isRequired,
   fetchingDevices: PropTypes.bool.isRequired,
   linkedDevices: PropTypes.array.isRequired,
+  isLinkedToPhone: PropTypes.array.isRequired,
   dispatch: PropTypes.func.isRequired
+}
+
+function linkedPhoneExists(devices) {
+  return devices.find((device) => {
+    return device.type == 'phone'
+  }) !== undefined
 }
 
 function mapStateToProps(state) {
@@ -46,7 +54,8 @@ function mapStateToProps(state) {
     registered: devices.registered,
     registerInProgress: devices.registerInProgress,
     fetchingDevices: devices.fetchingDevices,
-    linkedDevices: devices.linkedDevices
+    linkedDevices: devices.linkedDevices,
+    isLinkedToPhone: linkedPhoneExists(devices.linkedDevices)
   }
 }
 export default connect(mapStateToProps)(App);

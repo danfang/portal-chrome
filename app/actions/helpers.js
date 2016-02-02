@@ -1,13 +1,16 @@
-export function authenticatedRequest(method, body, credentials) {
-  return {
+export function authenticatedRequest(credentials, method, body) {
+  let request = {
     method: method,
     headers: {
-      'Content-type': 'application/json;',
       'X-USER-ID': credentials.userID,
       'X-USER-TOKEN': credentials.userToken,
-    },
-    body: JSON.stringify(body)
+    }
   }
+  if (method == 'POST') {
+    request.headers['Content-type'] = 'application/json;'
+    request.body = JSON.stringify(body)
+  }
+  return request
 }
 
 export function checkResponse(response) {

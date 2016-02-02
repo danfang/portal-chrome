@@ -6,10 +6,10 @@ import NativeListener from 'react-native-listener'
 
 class Root extends Component {
   componentDidMount() {
-    componentHandler.upgradeDom()
+    componentHandler.upgradeAllRegistered()
   }
   componentDidUpdate() {
-    componentHandler.upgradeDom()
+    componentHandler.upgradeAllRegistered()
   }
   render() {
     const { dispatch, loginStatus } = this.props
