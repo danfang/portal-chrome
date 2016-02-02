@@ -1,4 +1,21 @@
 #messages {
-  overflow-y: scroll;
-  @import './message.scss';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  #messages-header {
+    position: relative;
+    z-index: 9999;
+    background-color: white;
+    border-bottom: 1px solid #aaa;
+    top: 0;
+  }
+
+  #message-history {
+    overflow-y: scroll;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    @import './message.scss';
+  }
 }

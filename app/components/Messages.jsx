@@ -3,14 +3,20 @@ import Message from './Message'
 
 class Messages extends Component {
   render() {
-    return <div id="messages" className="mdl-cell mdl-cell--8-col">
-      <h1>Messages</h1>
-      <Message />
-      <Message />
-      <Message />
-      <Message />
-      <Message />
-      <input type="text">Type a message</input>
+    return <div id="messages">
+      <div id="messages-header">
+        <p>Messages</p>
+      </div>
+      <div id="message-history">
+        <Message />
+        <Message />
+        <Message />
+        <Message />
+      </div>
+      <div className="mdl-textfield mdl-js-textfield">
+        <input className="mdl-textfield__input" type="text" id="message-input" />
+        <label className="mdl-textfield__label" for="message-input">Your message here...</label>
+      </div>
     </div>
   }
 }

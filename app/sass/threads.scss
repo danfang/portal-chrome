@@ -1,4 +1,6 @@
 #threads {
   overflow-y: scroll;
+  width: 25%;
+  min-width: 300px;
   @import './thread.scss';
 }

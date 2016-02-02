@@ -1,4 +1,30 @@
 #app {
+  position: static;
+
+  .mdl-layout__drawer-button i {
+    padding-top: 10px;
+  }
+
+  .mdl-layout__content {
+    position: static;
+  }
+
+  .page-content {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+  }
+
+  .mdl-grid {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+
+    .mdl-cell {
+      margin: 0 8px;
+    }
+  }
+
   @import './threads.scss';
   @import './messages.scss';
 }
