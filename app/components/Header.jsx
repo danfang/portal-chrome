@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import NativeListener from 'react-native-listener';
 
 export default class Header extends Component {
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate() {
     componentHandler.upgradeDom()
   }
   render() {

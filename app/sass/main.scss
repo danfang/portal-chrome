@@ -18,4 +18,20 @@ body {
 #root {
   @import 'login.scss';
   @import 'app.scss';
+
+  .link-description {
+    padding-right: 15px;
+  }
+
+  .mdl-spinner.mdl-js-spinner.is-active {
+    vertical-align: middle;
+  }
+
+  #login-status {
+    margin: 50px;
+
+    .material-icons {
+      vertical-align: middle;
+    }
+  }
 }

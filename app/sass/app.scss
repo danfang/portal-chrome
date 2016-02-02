@@ -1,4 +1,7 @@
 #app {
+  @import './threads.scss';
+  @import './messages.scss';
+
   position: static;
 
   .mdl-layout__drawer-button i {
@@ -18,11 +21,4 @@
     position: absolute;
     width: 100%;
   }
-
-  .link-description {
-    padding-right: 15px;
-  }
-
-  @import './threads.scss';
-  @import './messages.scss';
 }
