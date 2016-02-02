@@ -1,6 +1,28 @@
 #threads {
-  overflow-y: scroll;
+  @import './thread.scss';
+  height: 100%;
   width: 25%;
   min-width: 300px;
-  @import './thread.scss';
+  left: 0;
+
+  #threads-header {
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+    height: 25px;
+    padding: 15px 5px;
+    position: relative;
+    text-align: center;
+    top: 0;
+    z-index: 9999;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  #threads-body {
+    overflow-y: scroll;
+    margin: 0;
+    height: 100%;
+  }
 }

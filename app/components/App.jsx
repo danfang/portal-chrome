@@ -9,6 +9,10 @@ import Menu from './Menu'
 
 class App extends Component {
   componentDidMount() {
+    const { dispatch, registered } = this.props
+    if (!registered) {
+      dispatch(register())
+    }
     componentHandler.upgradeDom()
   }
   render() {

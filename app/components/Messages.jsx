@@ -13,7 +13,7 @@ class Messages extends Component {
         <Message />
         <Message />
       </div>
-      <div className="mdl-textfield mdl-js-textfield">
+      <div id="message-input-container" className="mdl-textfield mdl-js-textfield">
         <input className="mdl-textfield__input" type="text" id="message-input" />
         <label className="mdl-textfield__label" for="message-input">Your message here...</label>
       </div>

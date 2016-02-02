@@ -9,20 +9,18 @@
     position: static;
   }
 
+  .mdl-grid {
+    padding: 0;
+  }
+
   .page-content {
-    position: absolute;
     height: 100%;
+    position: absolute;
     width: 100%;
   }
 
-  .mdl-grid {
-    height: 100%;
-    width: 100%;
-    padding: 0;
-
-    .mdl-cell {
-      margin: 0 8px;
-    }
+  .link-description {
+    padding-right: 15px;
   }
 
   @import './threads.scss';
