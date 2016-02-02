@@ -8,6 +8,9 @@ class Root extends Component {
     const { dispatch } = this.props;
     dispatch(googleSignIn())
   }
+  componentDidMount() {
+    componentHandler.upgradeDom();
+  }
   render() {
     const { dispatch, loginStatus } = this.props;
     const { loggedIn, inProgress, error } = loginStatus;

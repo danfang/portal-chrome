@@ -1,7 +1,4 @@
 #threads {
-  float: left;
-  width: 30%;
-  min-width: 200px;
-
+  overflow-y: scroll;
   @import './thread.scss';
 }

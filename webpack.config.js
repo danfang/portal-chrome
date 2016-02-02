@@ -30,8 +30,12 @@ module.exports = {
         },
       },
       {
-        test: /\.png$/,
+        test: /\.(png|woff2|woff|ttf)$/,
         loader: 'file?name=assets/[name].[ext]'
+      },
+      {
+        test: /\.css$/,
+        loaders: ['style', 'css']
       },
       {
         test: /\.scss$/,

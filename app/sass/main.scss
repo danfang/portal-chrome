@@ -1,5 +1,40 @@
+@import '~material-design-lite/material.min.css';
+
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Material Icons'),
+       local('MaterialIcons-Regular'),
+       url(~material-design-icons/iconfont/MaterialIcons-Regular.woff2) format('woff2'),
+       url(~material-design-icons/iconfont/MaterialIcons-Regular.woff) format('woff'),
+       url(~material-design-icons/iconfont/MaterialIcons-Regular.ttf) format('truetype')
+}
+
+body {
+  margin: 0;
+}
+
+.mdl-layout__drawer-button i {
+  padding-top: 10px;
+}
+
+.page-content {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+
+.mdl-grid {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+}
+
 #root {
   font-family: 'Source Sans Pro', sans-serif;
   @import 'login.scss';
-  @import 'app.scss';  
+  @import 'app.scss';
+  @import './threads.scss';
+  @import './messages.scss';
 }

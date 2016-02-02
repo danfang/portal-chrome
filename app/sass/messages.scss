@@ -1,5 +1,4 @@
 #messages {
-  float: right;
-  width: 70%;
+  overflow-y: scroll;
   @import './message.scss';
 }
