@@ -7,10 +7,10 @@ class Thread extends Component {
         <span className="mdl-list__item-primary-content">
           <i className="material-icons mdl-list__item-icon">person</i>
           <span className="mdl-list__item-text">Bryan Cranston</span>
-          <span className="mdl-list__item-sub-title">62 Episodes</span>
+          <span className="mdl-list__item-sub-title">Hey let's cook.</span>
         </span>
         <span className="mdl-list__item-secondary-content">
-          <span className="mdl-list__item-secondary-info">Actor</span>
+          <span className="mdl-list__item-secondary-info">Friend</span>
           <a className="mdl-list__item-secondary-action" href="#">
             <i className="material-icons">star</i>
           </a>

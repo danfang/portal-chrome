@@ -1,3 +1,8 @@
 .message {
-  padding: 25px 50px;
+  margin: 25px 50px;
+  min-height: 0;
+
+  .mdl-card {
+    min-height: 0;
+  }
 }

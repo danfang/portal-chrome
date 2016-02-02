@@ -8,10 +8,10 @@ export default class Menu extends Component {
       <div ref="menu" className="mdl-layout__drawer">
         <span className="mdl-layout-title">Settings</span>
         <nav className="mdl-navigation">
-          <a className="mdl-navigation__link" href="#">Registration Status</a>
           <NativeListener onClick={signOutOnClick}>
-            <a className="mdl-navigation__link" href="#">Sign Out
-              <i className="material-icons">exit to app</i>
+            <a className="mdl-navigation__link" href="#">
+              <span className="link-description">Sign Out</span>
+              <i className="material-icons">exit_to_app</i>
             </a>
           </NativeListener>
         </nav>
