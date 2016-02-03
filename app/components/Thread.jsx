@@ -1,7 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import NativeListener from 'react-native-listener';
+import moment from 'moment';
 
 import { NEW_MESSAGE_INDEX } from '../const';
+
+const maxMessagePreviewLength = 45;
 
 function getListClassName(selected) {
   const selectedClass = selected ? ' is-selected' : '';
@@ -21,9 +24,15 @@ export default class Thread extends Component {
     const { index, selected, thread } = this.props;
     let time = 'Now';
     let to = 'New Message';
+    let messagePreview = '';
     if (index !== NEW_MESSAGE_INDEX) {
-      time = new Date(thread.messages[thread.messages.length - 1].at).toLocaleString();
       to = thread.contact.name || thread.phoneNumber;
+      const lastMessage = thread.messages[thread.messages.length - 1];
+      time = moment(lastMessage.at).fromNow();
+      messagePreview = lastMessage.body.substring(0, maxMessagePreviewLength);
+      if (messagePreview.length === maxMessagePreviewLength) {
+        messagePreview = `${messagePreview.trim()}...`;
+      }
     }
     return (
       <NativeListener onClick={this.onClick}>
@@ -31,6 +40,7 @@ export default class Thread extends Component {
           <span className="mdl-list__item-primary-content">
             <i className="material-icons mdl-list__item-icon">person</i>
             <span className="mdl-list__item-text">{ to }</span>
+            <span className="mdl-list__item-sub-title">{ messagePreview }</span>
           </span>
           <span className="mdl-list__item-secondary-content">
             <span className="mdl-list__item-secondary-info">{ time }</span>

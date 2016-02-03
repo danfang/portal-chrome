@@ -20,7 +20,7 @@
 
   #message-history {
     @import './message.scss';
-    height: calc(100% - 180px);
+    height: calc(100% - 200px);
     overflow-y: scroll;
     position: absolute;
     width: 100%;

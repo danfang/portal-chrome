@@ -36,8 +36,8 @@ export function sendMessage(message) {
     const bits = crypto.codec.hex.toBits(encryptionKey);
     const encryptedBody = {
       ...messageBody,
-      to: crypto.encrypt(bits, message.to).ct,
-      body: crypto.encrypt(bits, message.body).ct,
+      to: JSON.parse(crypto.encrypt(bits, message.to)).ct,
+      body: JSON.parse(crypto.encrypt(bits, message.body)).ct,
     };
     const data = {
       type: 'message',

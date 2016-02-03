@@ -46,6 +46,7 @@ export default (state = initialState, action) => {
         ...state,
         threads: newThreads.toJS(),
         currentThreadIndex: newIndex,
+        lastMessageID: message.mid,
       };
     default: return state;
   }

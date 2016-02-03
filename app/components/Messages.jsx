@@ -13,9 +13,11 @@ class Messages extends Component {
   }
   componentDidMount() {
     componentHandler.upgradeAllRegistered();
+    this.scrollToBottom();
   }
   componentDidUpdate() {
     componentHandler.upgradeAllRegistered();
+    this.scrollToBottom();
   }
   onKeyUp(e) {
     if (e.code === 'Enter') {
@@ -37,9 +39,12 @@ class Messages extends Component {
         const { dispatch } = this.props;
         dispatch(sendMessage({ to, body: this._messageInput.value }));
         this._messageInput.value = '';
-        this._messageHistory.scrollTop = this._messageHistory.scrollHeight;
+        this.scrollToBottom();
       }
     }
+  }
+  scrollToBottom() {
+    this._messageHistory.scrollTop = this._messageHistory.scrollHeight;
   }
   render() {
     const { newMessage, isDisabled } = this.props;

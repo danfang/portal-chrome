@@ -1,6 +1,11 @@
 .thread {
   cursor: pointer;
-  
+
+  .mdl-list__item-secondary-info {
+    margin: 0;
+    text-align: right;
+  }
+
   &.is-selected {
     background-color: #eee;
   }
