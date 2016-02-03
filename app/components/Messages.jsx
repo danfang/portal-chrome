@@ -2,11 +2,15 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import NativeListener from 'react-native-listener';
 
-import { DEBUG_MODE } from '../const';
+import { DEBUG_MODE, NEW_MESSAGE_INDEX } from '../const';
 import Message from './Message';
 import { sendMessage } from '../actions/messageActions';
 
 class Messages extends Component {
+  constructor() {
+    super();
+    this.onKeyUp = this.onKeyUp.bind(this);
+  }
   componentDidMount() {
     componentHandler.upgradeAllRegistered();
   }
@@ -38,11 +42,7 @@ class Messages extends Component {
     }
   }
   render() {
-    const { newMessage, currentThread, isDisabled } = this.props;
-    const { messages, messageInput } = currentThread;
-    const messageElements = messages.map((message) =>
-      <Message key={message.mid} message={message} />
-    );
+    const { newMessage, isDisabled } = this.props;
     let toField = '';
     if (newMessage) {
       toField = (
@@ -57,9 +57,18 @@ class Messages extends Component {
         </div>
       );
     }
+    let messageElements = '';
+    let messageInputValue = '';
+    if (this.props.currentThread) {
+      const { messages, messageInput } = this.props.currentThread;
+      messageElements = messages.map((message) =>
+        <Message key={message.mid} message={message} />
+      );
+      messageInputValue = messageInput;
+    }
     const messageInputElement = (
       <input id="message-input" ref={r => this._messageInput = r}
-        className="mdl-textfield__input" type="text" defaultValue={messageInput}
+        className="mdl-textfield__input" type="text" defaultValue={messageInputValue}
         disabled={isDisabled && !DEBUG_MODE}
       />
     );
@@ -93,15 +102,23 @@ class Messages extends Component {
 Messages.propTypes = {
   newMessage: PropTypes.bool.isRequired,
   isDisabled: PropTypes.bool.isRequired,
-  currentThread: PropTypes.shape.isRequired,
+  currentThread: PropTypes.shape({
+    messages: PropTypes.array.isRequired,
+    messageInput: PropTypes.string.isRequired,
+    contact: PropTypes.object,
+    phoneNumber: PropTypes.string,
+  }),
   dispatch: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state) {
-  const { currentThread, threads } = state.messages;
+  const { currentThreadIndex, threads } = state.messages;
+  if (currentThreadIndex === NEW_MESSAGE_INDEX) {
+    return { newMessage: true };
+  }
   return {
-    newMessage: currentThread === 0,
-    currentThread: threads[currentThread],
+    newMessage: false,
+    currentThread: threads[currentThreadIndex],
   };
 }
 

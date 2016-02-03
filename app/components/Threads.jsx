@@ -1,22 +1,28 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
+import { NEW_MESSAGE_INDEX } from '../const';
 import { selectThread } from '../actions/messageActions';
 import Thread from './Thread';
 
 class Threads extends Component {
+  constructor() {
+    super();
+    this.threadOnClicked = this.threadOnClicked.bind(this);
+  }
   threadOnClicked(index) {
     const { dispatch } = this.props;
     dispatch(selectThread(index));
   }
   render() {
     // TODO: Add FeedbackThread
-    const { currentThread, threads } = this.props;
+    const { currentThreadIndex, threads } = this.props;
     const threadElements = threads.map((thread, index) =>
       <Thread
         key={index}
-        threadOnClicked={this.threadOnClicked(index)}
-        selected={index === currentThread}
+        index={index}
+        threadOnClicked={this.threadOnClicked}
+        selected={index === currentThreadIndex}
         thread={thread}
       />
     );
@@ -26,6 +32,12 @@ class Threads extends Component {
           <p>Conversations</p>
         </div>
         <ul id="threads-body" className="mdl-list">
+          <Thread
+            key={NEW_MESSAGE_INDEX}
+            index={NEW_MESSAGE_INDEX}
+            selected={currentThreadIndex === NEW_MESSAGE_INDEX}
+            threadOnClicked={this.threadOnClicked}
+          />
           { threadElements }
         </ul>
       </div>
@@ -34,7 +46,7 @@ class Threads extends Component {
 }
 
 Threads.propTypes = {
-  currentThread: PropTypes.shape.isRequired,
+  currentThreadIndex: PropTypes.number.isRequired,
   threads: PropTypes.array.isRequired,
   dispatch: PropTypes.func.isRequired,
 };
@@ -42,7 +54,7 @@ Threads.propTypes = {
 function mapStateToProps(state) {
   const { messages } = state;
   return {
-    currentThread: messages.currentThread,
+    currentThreadIndex: messages.currentThreadIndex,
     threads: messages.threads,
   };
 }

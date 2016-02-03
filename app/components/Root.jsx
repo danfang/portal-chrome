@@ -6,14 +6,22 @@ import { googleSignIn } from '../actions/loginActions';
 import App from './App';
 
 class Root extends Component {
+  constructor() {
+    super();
+    this.signIn = this.signIn.bind(this);
+  }
   componentDidMount() {
     componentHandler.upgradeAllRegistered();
   }
   componentDidUpdate() {
     componentHandler.upgradeAllRegistered();
   }
+  signIn() {
+    const { dispatch } = this.props;
+    dispatch(googleSignIn());
+  }
   render() {
-    const { dispatch, loginStatus } = this.props;
+    const { loginStatus } = this.props;
     const { loggedIn, inProgress, error } = loginStatus;
     let statusIcon = '';
     if (inProgress) {
@@ -25,7 +33,7 @@ class Root extends Component {
       return (
         <div id="login">
           <h1>Portal Messaging</h1>
-          <NativeListener onClick={dispatch(googleSignIn())}>
+          <NativeListener onClick={this.signIn}>
             <div className="btn-sign-in"></div>
           </NativeListener>
           <div id="login-status">

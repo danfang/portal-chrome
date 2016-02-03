@@ -1,10 +1,11 @@
 import Immutable from 'immutable';
 
+import { NEW_MESSAGE_INDEX } from '../const';
 import { THREAD_SELECTED, SENDING_MESSAGE } from '../actions/messageActions';
 
 const initialState = {
   threads: [],
-  currentThread: -1,
+  currentThreadIndex: NEW_MESSAGE_INDEX,
   lastMessageID: null,
 };
 
@@ -14,7 +15,7 @@ export default (state = initialState, action) => {
     case THREAD_SELECTED:
       return {
         ...state,
-        currentThread: action.index,
+        currentThreadIndex: action.index,
       };
     case SENDING_MESSAGE:
       const { message } = action;
@@ -22,13 +23,15 @@ export default (state = initialState, action) => {
         thread.phoneNumber === message.to || thread.contact.id === message.to
       );
       let newThreads = Immutable.fromJS(threads).asMutable();
-      if (index === -1) {
+      let newIndex = index;
+      if (index === NEW_MESSAGE_INDEX) {
         newThreads = newThreads.push({
           contact: {},
           phoneNumber: message.to,
           messages: [message],
           messageInput: '',
         });
+        newIndex = newThreads.length - 1;
       } else {
         const oldThread = threads[index];
         const newMessages = Immutable.fromJS(oldThread.messages).asMutable();
@@ -42,7 +45,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         threads: newThreads.toJS(),
-        currentThread: index,
+        currentThreadIndex: newIndex,
       };
     default: return state;
   }

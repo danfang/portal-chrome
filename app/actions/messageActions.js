@@ -1,4 +1,6 @@
 import uuid from 'node-uuid';
+import crypto from 'sjcl';
+
 import { SENDER_ID } from '../const';
 
 export const THREAD_SELECTED = 'THREAD_SELECTED';
@@ -18,20 +20,29 @@ export function selectThread(index) {
 }
 
 export function sendMessage(message) {
-  const mid = uuid.v4();
-  const messageBody = {
-    mid,
-    status: 'started',
-    at: Date.now(),
-    to: message.to,
-    body: message.body,
-  };
-  const data = {
-    type: 'message',
-    payload: JSON.stringify(messageBody),
-  };
   return (dispatch, getState) => {
-    const notificationKey = getState().devices.notificationKey;
+    const { notificationKey, encryptionKey } = getState().devices;
+    if (!notificationKey || !encryptionKey) {
+      throw new Error('Missing notification or encryption keys.');
+    }
+    const mid = uuid.v4();
+    const messageBody = {
+      mid,
+      status: 'started',
+      at: Date.now(),
+      to: message.to,
+      body: message.body,
+    };
+    const bits = crypto.codec.hex.toBits(encryptionKey);
+    const encryptedBody = {
+      ...messageBody,
+      to: crypto.encrypt(bits, message.to).ct,
+      body: crypto.encrypt(bits, message.body).ct,
+    };
+    const data = {
+      type: 'message',
+      payload: JSON.stringify(encryptedBody),
+    };
     const groupMessage = {
       messageId: uuid.v4(),
       destinationId: notificationKey,

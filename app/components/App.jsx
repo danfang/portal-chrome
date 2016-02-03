@@ -9,6 +9,10 @@ import Header from './Header';
 import Menu from './Menu';
 
 class App extends Component {
+  constructor() {
+    super();
+    this.signOut = this.signOut.bind(this);
+  }
   componentDidMount() {
     const { dispatch, registered } = this.props;
     if (!registered) {
@@ -17,12 +21,16 @@ class App extends Component {
     dispatch(fetchDevices());
     componentHandler.upgradeAllRegistered();
   }
+  signOut() {
+    const { dispatch } = this.props;
+    dispatch(signOut());
+  }
   render() {
-    const { dispatch, isLinkedToPhone } = this.props;
+    const { isLinkedToPhone } = this.props;
     return (
       <div id="app" refs="app" className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
         <Header { ...this.props } />
-        <Menu { ...this.props } signOutOnClick={dispatch(signOut())} />
+        <Menu { ...this.props } signOutOnClick={this.signOut} />
         <main className="mdl-layout__content">
           <div className="page-content">
             <div className="mdl-grid">
@@ -41,7 +49,7 @@ App.propTypes = {
   registerInProgress: PropTypes.bool.isRequired,
   fetchingDevices: PropTypes.bool.isRequired,
   linkedDevices: PropTypes.array.isRequired,
-  isLinkedToPhone: PropTypes.array.isRequired,
+  isLinkedToPhone: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
 };
 
