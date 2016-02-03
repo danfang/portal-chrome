@@ -4,6 +4,7 @@ import NativeListener from 'react-native-listener'
 
 import Message from './Message'
 import { sendMessage } from '../actions/messageActions'
+import { DEBUG_MODE } from '../const'
 
 class Messages extends Component {
   componentDidMount() {
@@ -38,7 +39,7 @@ class Messages extends Component {
     }
   }
   render() {
-    const { newMessage, currentThread } = this.props
+    const { newMessage, currentThread, isDisabled } = this.props
     const { messages, messageInput } = currentThread
     let messageElements = messages.map((message) => {
       return <Message key={message.mid} message={message} />
@@ -52,6 +53,18 @@ class Messages extends Component {
             type="text"/>
           <label className="mdl-textfield__label" htmlFor="message-to">Enter a name or phone number...</label>
         </div>
+      )
+    }
+    let messageInputElement = (
+      <input id="message-input" ref={r => this._messageInput = r}
+        className="mdl-textfield__input" type="text" defaultValue={messageInput}>
+      </input>
+    )
+    if (isDisabled && !DEBUG_MODE) {
+      messageInputElement = (
+        <input id="message-input" ref={r => this._messageInput = r}
+         className="mdl-textfield__input" type="text" defaultValue={messageInput} disabled>
+        </input>
       )
     }
     return <div id="messages">
@@ -68,13 +81,10 @@ class Messages extends Component {
       { toField }
       <div id="message-input-container" className="mdl-textfield mdl-js-textfield">
         <NativeListener onKeyUp={(e) => this.onKeyUp(e)}>
-          <input id="message-input"
-            ref={r => this._messageInput = r}
-            className="mdl-textfield__input" type="text"
-            defaultValue={messageInput} />
+          { messageInputElement }
         </NativeListener>
         <label className="mdl-textfield__label" htmlFor="message-input">
-          Your message here...
+          { isDisabled ? 'Unable to send messages. Please link a valid phone.' : 'Your message here...' }
         </label>
       </div>
     </div>

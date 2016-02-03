@@ -17,7 +17,7 @@ class App extends Component {
     componentHandler.upgradeAllRegistered()
   }
   render() {
-    const { dispatch } = this.props
+    const { dispatch, isLinkedToPhone } = this.props
     return <div id="app" refs="app" className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
       <Header { ...this.props } />
       <Menu { ...this.props } signOutOnClick={() => dispatch(signOut())} />
@@ -25,7 +25,7 @@ class App extends Component {
         <div className="page-content">
           <div className="mdl-grid">
             <Threads />
-            <Messages />
+            <Messages isDisabled={ !isLinkedToPhone }/>
           </div>
         </div>
       </main>
