@@ -1,17 +1,18 @@
-import { createStore, applyMiddleware, combineReducers } from 'redux'
-import thunkMiddleware from 'redux-thunk'
-import createLogger from 'redux-logger'
-import loginStatus from './reducers/loginStatus'
-import devices from './reducers/devices'
-import messages from './reducers/messages'
+import { createStore, applyMiddleware, combineReducers } from 'redux';
+import thunkMiddleware from 'redux-thunk';
+import createLogger from 'redux-logger';
 
-const loggerMiddleware = createLogger()
+import loginStatus from './reducers/loginStatus';
+import devices from './reducers/devices';
+import messages from './reducers/messages';
+
+const loggerMiddleware = createLogger();
 
 const appReducer = combineReducers({
   loginStatus,
   devices,
-  messages
-})
+  messages,
+});
 
 export default function configureStore(initialState) {
   return createStore(
@@ -21,5 +22,5 @@ export default function configureStore(initialState) {
       thunkMiddleware,
       loggerMiddleware
     )
-  )
+  );
 }

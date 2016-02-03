@@ -1,19 +1,24 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component, PropTypes } from 'react';
 
 export default class LinkedDevice extends Component {
   componentDidMount() {
-    componentHandler.upgradeAllRegistered()
+    componentHandler.upgradeAllRegistered();
   }
   render() {
-    const { device } = this.props
-    let deviceType = 'devices_other'
+    const { device } = this.props;
+    let deviceType = null;
     switch (device.type) {
       case 'chrome':
-        deviceType = 'web'
+        deviceType = 'web';
+        break;
       case 'phone':
-        deviceType = 'smartphone'
+        deviceType = 'smartphone';
+        break;
       case 'desktop':
-        deviceType = 'computer'
+        deviceType = 'computer';
+        break;
+      default:
+        deviceType = 'devices_other';
     }
     return (
       <li className="linked-device mdl-list__item">
@@ -22,7 +27,7 @@ export default class LinkedDevice extends Component {
           { device.name }
         </span>
       </li>
-    )
+    );
   }
 }
 
@@ -31,6 +36,6 @@ LinkedDevice.propTypes = {
     type: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     updated_at: PropTypes.number.isRequired,
-    created_at: PropTypes.number.isRequired
-  })
-}
+    created_at: PropTypes.number.isRequired,
+  }),
+};

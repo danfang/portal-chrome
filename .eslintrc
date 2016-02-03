@@ -1,0 +1,16 @@
+{
+  "extends": "airbnb",
+  "ecmaFeatures": {
+    "experimentalObjectRestSpread": true
+  },
+  "globals": {
+    "chrome": false,
+    "componentHandler": false
+  },
+  "rules": {
+    "react/jsx-no-bind": [2, {
+      "ignoreRefs": true
+    }],
+    "prefer-template": 1
+  }
+}

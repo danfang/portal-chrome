@@ -1,12 +1,17 @@
-import React, { Component } from 'react'
-import NativeListener from 'react-native-listener'
+import React, { Component, PropTypes } from 'react';
+import NativeListener from 'react-native-listener';
+
+function getListClassName(selected) {
+  const selectedClass = selected ? ' is-selected' : '';
+  return `thread mdl-list__item mdl-list__item--two-line ${selectedClass}`;
+}
 
 export default class Thread extends Component {
   render() {
-    const { threadOnClicked, selected, thread } = this.props
-    let time = new Date().toLocaleString()
+    const { threadOnClicked, selected, thread } = this.props;
+    let time = 'Now';
     if (thread.messages.length > 0) {
-      time = new Date(thread.messages[thread.messages.length-1].at).toLocaleString()
+      time = new Date(thread.messages[thread.messages.length - 1].at).toLocaleString();
     }
     return (
       <NativeListener onClick={threadOnClicked}>
@@ -20,12 +25,12 @@ export default class Thread extends Component {
           </span>
         </li>
       </NativeListener>
-    )
+    );
   }
 }
 
-function getListClassName(selected) {
-  let listClassName = 'thread mdl-list__item mdl-list__item--two-line'
-  listClassName += selected ? ' is-selected' : ''
-  return listClassName
-}
+Thread.propTypes = {
+  threadOnClicked: PropTypes.func.isRequired,
+  selected: PropTypes.bool.isRequired,
+  thread: PropTypes.shape.isRequired,
+};

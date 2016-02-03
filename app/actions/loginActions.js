@@ -1,22 +1,22 @@
-import { portalAPIEndpoint } from '../const'
-import { checkResponse } from './helpers'
+import { portalAPIEndpoint } from '../const';
+import { checkResponse } from './helpers';
 
 // Action constants
-export const GOOGLE_LOGIN = 'GOOGLE_LOGIN'
-export const GOOGLE_LOGIN_ERROR = 'GOOGLE_LOGIN_ERROR'
-export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
-export const SIGN_OUT = 'SIGN_OUT'
-export const RESTORE_LOGIN_STATUS = 'RESTORE_LOGIN_STATUS'
-export const MISSING_CREDENTIALS = 'MISSING_CREDENTIALS'
+export const GOOGLE_LOGIN = 'GOOGLE_LOGIN';
+export const GOOGLE_LOGIN_ERROR = 'GOOGLE_LOGIN_ERROR';
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const SIGN_OUT = 'SIGN_OUT';
+export const RESTORE_LOGIN_STATUS = 'RESTORE_LOGIN_STATUS';
+export const MISSING_CREDENTIALS = 'MISSING_CREDENTIALS';
 
 // Login endpoint
-const loginEndpoint = portalAPIEndpoint + 'login/google';
+const loginEndpoint = `${portalAPIEndpoint}/login/google`;
 
 // Manifest constants
 const manifest = chrome.runtime.getManifest();
 const clientId = encodeURIComponent(manifest.oauth2.client_id);
 const scopes = encodeURIComponent(manifest.oauth2.scopes.join(' '));
-const redirectUri = encodeURIComponent('https://' + chrome.runtime.id + '.chromiumapp.org');
+const redirectUri = encodeURIComponent(`https://${chrome.runtime.id}.chromiumapp.org`);
 
 const url = 'https://accounts.google.com/o/oauth2/auth' +
             '?client_id=' + clientId +
@@ -25,43 +25,6 @@ const url = 'https://accounts.google.com/o/oauth2/auth' +
             '&access_type=offline' +
             '&redirect_uri=' + redirectUri +
             '&scope=' + scopes;
-
-export function googleSignIn() {
-  return (dispatch) => {
-    dispatch(initiateGoogleLogin());
-
-    chrome.identity.launchWebAuthFlow({ url: url, interactive: true }, function(redirect) {
-      if (chrome.runtime.lastError) {
-        dispatch(googleLoginError());
-        Promise.resolve();
-        return;
-      }
-      let idToken = redirect.split('#', 2)[1].split('=')[1];
-      dispatch(authenticateUser(idToken));
-      Promise.resolve();
-    });
-  }
-}
-
-export function signOut() {
-  return { type: SIGN_OUT };
-}
-
-function authenticateUser(idToken) {
-  return (dispatch) => {
-    return fetch(loginEndpoint, {
-      method: 'post',
-      body: JSON.stringify({
-        id_token: idToken
-      })
-    })
-    .then(checkResponse)
-    .then(response => dispatch(successfulLogin({
-      userToken: response.user_token,
-      userID: response.user_id
-    })));
-  }
-}
 
 function initiateGoogleLogin() {
   return { type: GOOGLE_LOGIN };
@@ -72,9 +35,38 @@ function googleLoginError() {
 }
 
 function successfulLogin(credentials) {
-  return { type: LOGIN_SUCCESS, credentials }
+  return { type: LOGIN_SUCCESS, credentials };
 }
 
-function restoreStore(store = {}) {
-  return { type: RESTORE_LOGIN_STATUS, store: store };
+function authenticateUser(idToken) {
+  return dispatch =>
+    fetch(loginEndpoint, {
+      method: 'post',
+      body: JSON.stringify({ id_token: idToken }),
+    })
+    .then(checkResponse)
+    .then(response => dispatch(successfulLogin({
+      userToken: response.user_token,
+      userID: response.user_id,
+    })));
+}
+
+export function googleSignIn() {
+  return dispatch => {
+    dispatch(initiateGoogleLogin());
+    chrome.identity.launchWebAuthFlow({ url, interactive: true }, redirect => {
+      if (chrome.runtime.lastError) {
+        dispatch(googleLoginError());
+        Promise.resolve();
+        return;
+      }
+      const idToken = redirect.split('#', 2)[1].split('=')[1];
+      dispatch(authenticateUser(idToken));
+      Promise.resolve();
+    });
+  };
+}
+
+export function signOut() {
+  return { type: SIGN_OUT };
 }

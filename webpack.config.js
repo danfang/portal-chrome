@@ -19,6 +19,13 @@ module.exports = {
   },
 
   module: {
+    preLoaders: [
+      {
+        test: /\.jsx?$/,
+        loader: "eslint-loader",
+        include: PATHS.app
+      }
+    ],
     loaders: [
       {
         test: /\.jsx?$/,
@@ -26,7 +33,6 @@ module.exports = {
         include: PATHS.app,
         query: {
           cacheDirectory: true,
-          presets: ['react', 'es2015'],
         },
       },
       {
