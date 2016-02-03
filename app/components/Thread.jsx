@@ -4,7 +4,10 @@ import NativeListener from 'react-native-listener'
 export default class Thread extends Component {
   render() {
     const { threadOnClicked, selected, thread } = this.props
-    console.log(thread)
+    let time = new Date().toLocaleString()
+    if (thread.messages.length > 0) {
+      time = new Date(thread.messages[thread.messages.length-1].at).toLocaleString()
+    }
     return (
       <NativeListener onClick={threadOnClicked}>
         <li className={getListClassName(selected)}>
@@ -13,7 +16,7 @@ export default class Thread extends Component {
             <span className="mdl-list__item-text">{thread.contact.name || thread.phoneNumber}</span>
           </span>
           <span className="mdl-list__item-secondary-content">
-            <span className="mdl-list__item-secondary-info">Jan 3</span>
+            <span className="mdl-list__item-secondary-info">{ time }</span>
           </span>
         </li>
       </NativeListener>

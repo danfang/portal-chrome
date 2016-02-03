@@ -14,7 +14,7 @@ export function sendMessage(message) {
   let messageBody = {
     "mid": mid,
     "status": "started",
-    "at": "2015-06-09 08:00:00",
+    "at": Date.now(),
     "to": message.to,
     "body": message.body
   }

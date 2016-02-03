@@ -35,6 +35,7 @@ class Messages extends Component {
           body: this._messageInput.value
         }))
         this._messageInput.value = ''
+        this._messageHistory.scrollTop = this._messageHistory.scrollHeight
       }
     }
   }
@@ -75,7 +76,7 @@ class Messages extends Component {
         <div className="mdl-snackbar__text"></div>
         <button className="mdl-snackbar__action" type="button"></button>
       </div>
-      <div id="message-history">
+      <div ref={r => this._messageHistory = r} id="message-history">
         {messageElements}
       </div>
       { toField }
