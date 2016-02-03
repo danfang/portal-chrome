@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { selectThread } from '../actions/messageActions'
-import { Thread, NewMessageThread } from './Thread'
+import Thread from './Thread'
 
 class Threads extends Component {
   threadOnClicked(index) {
@@ -11,13 +11,14 @@ class Threads extends Component {
   }
   render() {
     // TODO: Add FeedbackThread
-    const { currentThread } = this.props
-    const threads = [1, 2, 3, 4]
+    const { currentThread, threads } = this.props
     const threadElements = threads.map((thread, index) => {
       return (
         <Thread
-          key={index} threadOnClicked={(e) => this.threadOnClicked(index)}
-          selected={index == currentThread}>
+          key={index}
+          threadOnClicked={(e) => this.threadOnClicked(index)}
+          selected={index == currentThread}
+          thread={thread}>
         </Thread>
       )
     })
@@ -26,10 +27,6 @@ class Threads extends Component {
         <p>Conversations</p>
       </div>
       <ul id="threads-body" className="mdl-list">
-        <NewMessageThread
-          threadOnClicked={(e) => this.threadOnClicked(-1)}
-          selected={currentThread == -1}>
-        </NewMessageThread>
         { threadElements }
       </ul>
     </div>
