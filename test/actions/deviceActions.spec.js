@@ -1,7 +1,7 @@
 /* eslint-env es6, mocha */
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import nock from 'nock';
+import fetchMock from 'fetch-mock';
 
 import { portalAPIEndpoint } from '../../app/const';
 import { fetchDevices } from '../../app/actions/deviceActions';
@@ -17,9 +17,8 @@ const loginStatusWithCredentials = {
 
 describe('fetch devices', () => {
   afterEach(() => {
-    nock.cleanAll();
+    fetchMock.restore();
   });
-
   it('dispatches FETCHING_DEVICES, then FETCHED_DEVICES on success', (done) => {
     const returnedDevices = [{
       created_at: 12345,
@@ -27,19 +26,23 @@ describe('fetch devices', () => {
       type: 'phone',
       updated_at: 12345,
     }];
-    nock(portalAPIEndpoint)
-      .get('/user/devices')
-      .reply(200, {
-        devices: returnedDevices,
-      });
+
+    fetchMock.mock(`${portalAPIEndpoint}/user/devices`, 'GET', {
+      devices: returnedDevices,
+    });
 
     const expectedActions = [
       { type: types.FETCHING_DEVICES },
       { type: types.FETCHED_DEVICES, devices: returnedDevices },
     ];
 
-    const store = mockStore({ loginStatus: loginStatusWithCredentials },
-      expectedActions, done);
+    done();
+    
+    const store = mockStore({ loginStatus: loginStatusWithCredentials }, expectedActions, () => {
+      expect(fetchMock.calls().unmatched().length).to.equal(0);
+      fetch.restore();
+      done();
+    });
 
     store.dispatch(fetchDevices());
   });
