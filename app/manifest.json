@@ -1,0 +1,17 @@
+{
+  "name": "Portal Messaging",
+  "version": "1.0",
+  "manifest_version": 2,
+  "minimum_chrome_version": "29",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg2oFrv1S1ka/ukhFbsiQUurReg+k/9BnMUJbjW5+hBKduccVj6RT9dPOM4HlYCPF0xxkP0qP0ozs8pJEgf1CYXs7y+8v2oVvHwgjEtC9aSZHsy8NXXlgUBbVUfwVesdqQLwz3pS64kqHlpHqngUPEh1b+VYzytbMxmZ8t6OWEpSv0OEtxFYyAFMNITpdmYXwGtMKh/VNJt5sUeRxjnqI2HYcSz8dDO8Fs6Z/GgFU3XMmm4AdNOzWv3853roS8JAQQeyuvvazptbkIQ8mc1/G+/bmt1av0JLTsBvTTpIw3FUiO2h2O/1pcgQOSECSOBQNPuhN/lzKhCy8BO2Cn3OV9wIDAQAB",
+  "app": {
+    "background": {
+      "scripts": ["main.js"]
+    }
+  },
+  "permissions": ["identity", "gcm", "storage", "https://dev.portalmessaging.com/*", "https://fonts.googleapis.com/*"],
+  "oauth2": {
+    "client_id": "1045304436932-564pg9gi9lee05mg45frg7kigd7h5775.apps.googleusercontent.com",
+    "scopes": ["profile", "email"]
+  }
+}

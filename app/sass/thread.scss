@@ -5,7 +5,11 @@
     margin: 0;
     text-align: right;
   }
-
+  @media screen and (max-width: 768px) {
+    .mdl-list__item-sub-title {
+      display: none;
+    }
+  }
   &.is-selected {
     background-color: #eee;
   }
