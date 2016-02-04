@@ -4,7 +4,7 @@
   "description": "Portal client for Chrome",
   "scripts": {
     "build": "webpack",
-    "test": "karma start"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
