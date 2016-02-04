@@ -22,8 +22,8 @@ To set up the Chrome extension locally, do the following. There is a 83% chance 
 
 - `git clone ssh://git@code.portalmessaging.com:2222/clients/portal-chrome.git`
 - `cd portal-chrome`
-- `npm i`
-- `webpack`
+- `npm i` (make sure you have npm installed globally)
+- `npm run build`
 - `cp app/main.js app/manifest.json app/index.html build/`
 - Chrome -> Extensions -> Load Unpacked Extension -> portal-chrome/build
 
