@@ -3,7 +3,7 @@ cache:
     - node_modules/
 
 build:
-  image: emmenko/nodejs-karma
+  image: node
   commands:
     - npm -s i
     - npm test

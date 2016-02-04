@@ -2,11 +2,11 @@ var webpack = require('webpack');
 
 module.exports = function (config) {
   config.set({
-    browsers: [ 'Chrome' ], //run in Chrome
+    browsers: [ 'PhantomJS' ],
     singleRun: true, //just run once by default
     frameworks: [ 'chai', 'mocha' ], //use the mocha test framework
     plugins: [
-     'karma-chrome-launcher',
+     'karma-phantomjs-launcher',
      'karma-chai',
      'karma-mocha',
      'karma-sourcemap-loader',
