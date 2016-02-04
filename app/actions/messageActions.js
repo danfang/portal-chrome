@@ -1,22 +1,19 @@
 import uuid from 'node-uuid';
 import crypto from 'sjcl';
+import * as types from '../constants/ActionTypes';
 
 import { SENDER_ID } from '../const';
 
-export const THREAD_SELECTED = 'THREAD_SELECTED';
-export const SENDING_MESSAGE = 'SENDING_MESSAGE';
-export const SENT_MESSAGE = 'SENT_MESSAGE';
-
 function sendingMessage(message) {
-  return { type: SENDING_MESSAGE, message };
+  return { type: types.SENDING_MESSAGE, message };
 }
 
 function sentMessage(mid) {
-  return { type: SENT_MESSAGE, mid };
+  return { type: types.SENT_MESSAGE, mid };
 }
 
 export function selectThread(index) {
-  return { type: THREAD_SELECTED, index };
+  return { type: types.THREAD_SELECTED, index };
 }
 
 export function sendMessage(message) {

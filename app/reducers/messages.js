@@ -1,7 +1,7 @@
 import Immutable from 'immutable';
 
 import { NEW_MESSAGE_INDEX } from '../const';
-import { THREAD_SELECTED, SENDING_MESSAGE } from '../actions/messageActions';
+import * as types from '../constants/ActionTypes';
 
 const initialState = {
   threads: [],
@@ -12,12 +12,12 @@ const initialState = {
 export default (state = initialState, action) => {
   const { threads } = state;
   switch (action.type) {
-    case THREAD_SELECTED:
+    case types.THREAD_SELECTED:
       return {
         ...state,
         currentThreadIndex: action.index,
       };
-    case SENDING_MESSAGE:
+    case types.SENDING_MESSAGE:
       const { message } = action;
       const index = threads.findIndex(thread =>
         thread.phoneNumber === message.to || thread.contact.id === message.to

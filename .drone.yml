@@ -1,0 +1,9 @@
+cache:
+  mount:
+    - node_modules/
+
+build:
+  image: node:latest
+  command:
+    - npm i
+    - npm test

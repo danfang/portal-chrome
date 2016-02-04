@@ -1,13 +1,6 @@
 import { portalAPIEndpoint } from '../const';
 import { checkResponse } from './helpers';
-
-// Action constants
-export const GOOGLE_LOGIN = 'GOOGLE_LOGIN';
-export const GOOGLE_LOGIN_ERROR = 'GOOGLE_LOGIN_ERROR';
-export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-export const SIGN_OUT = 'SIGN_OUT';
-export const RESTORE_LOGIN_STATUS = 'RESTORE_LOGIN_STATUS';
-export const MISSING_CREDENTIALS = 'MISSING_CREDENTIALS';
+import * as types from '../constants/ActionTypes';
 
 // Login endpoint
 const loginEndpoint = `${portalAPIEndpoint}/login/google`;
@@ -27,15 +20,19 @@ const url = 'https://accounts.google.com/o/oauth2/auth' +
             '&scope=' + scopes;
 
 function initiateGoogleLogin() {
-  return { type: GOOGLE_LOGIN };
+  return { type: types.GOOGLE_LOGIN };
 }
 
 function googleLoginError() {
-  return { type: GOOGLE_LOGIN_ERROR };
+  return { type: types.GOOGLE_LOGIN_ERROR };
 }
 
 function successfulLogin(credentials) {
-  return { type: LOGIN_SUCCESS, credentials };
+  return { type: types.LOGIN_SUCCESS, credentials };
+}
+
+export function signOut() {
+  return { type: types.SIGN_OUT };
 }
 
 function authenticateUser(idToken) {
@@ -65,8 +62,4 @@ export function googleSignIn() {
       Promise.resolve();
     });
   };
-}
-
-export function signOut() {
-  return { type: SIGN_OUT };
 }

@@ -1,4 +1,4 @@
-import * as types from '../actions/loginActions';
+import * as types from '../constants/ActionTypes';
 
 export default function loginStatus(state = {
   loggedIn: false,

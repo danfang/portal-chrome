@@ -1,4 +1,4 @@
-import * as types from '../actions/deviceActions';
+import * as types from '../constants/ActionTypes';
 import { SIGN_OUT } from '../actions/loginActions';
 
 const initialState = {

@@ -1,38 +1,32 @@
 import { SENDER_ID, portalAPIEndpoint } from '../const';
 import { authenticatedRequest, checkResponse } from './helpers';
-
-export const UNREGISTER_DEVICE = 'UNREGISTER_DEVICE';
-export const REGISTER_DEVICE = 'REGISTER_DEVICE';
-export const REGISTERED_DEVICE = 'REGISTERED_DEVICE';
-export const FETCHING_DEVICES = 'FETCHING_DEVICES';
-export const FETCHED_DEVICES = 'FETCHED_DEVICES';
-export const REGISTRATION_ERROR = 'REGISTRATION_ERROR';
+import * as types from '../constants/ActionTypes';
 
 const devicesEndpoint = `${portalAPIEndpoint}/user/devices`;
 
 function registerDevice() {
-  return { type: REGISTER_DEVICE };
+  return { type: types.REGISTER_DEVICE };
 }
 
 function unregisterDevice() {
-  return { type: UNREGISTER_DEVICE };
+  return { type: types.UNREGISTER_DEVICE };
 }
 
 function registeredDevice(keys) {
   const { encryptionKey, notificationKey } = keys;
-  return { type: REGISTERED_DEVICE, encryptionKey, notificationKey };
+  return { type: types.REGISTERED_DEVICE, encryptionKey, notificationKey };
 }
 
 function registrationError(error) {
-  return { type: REGISTRATION_ERROR, error };
+  return { type: types.REGISTRATION_ERROR, error };
 }
 
 function fetchingDevices() {
-  return { type: FETCHING_DEVICES };
+  return { type: types.FETCHING_DEVICES };
 }
 
 function fetchedDevices(devices) {
-  return { type: FETCHED_DEVICES, devices };
+  return { type: types.FETCHED_DEVICES, devices };
 }
 
 function sendRegistrationId(credentials, registrationId) {
@@ -81,7 +75,6 @@ export function fetchDevices() {
       return;
     }
     dispatch(fetchingDevices());
-
     fetch(devicesEndpoint, authenticatedRequest(credentials, 'GET'))
     .then(checkResponse)
     .then(response => dispatch(fetchedDevices(response.devices)));
