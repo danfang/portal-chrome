@@ -3,7 +3,7 @@ cache:
     - node_modules/
 
 build:
-  image: node:latest
-  command:
+  image: node
+  commands:
     - npm i
     - npm test
