@@ -3,38 +3,34 @@ var webpack = require('webpack');
 module.exports = function (config) {
   config.set({
     browsers: [ 'PhantomJS' ],
-    singleRun: true, //just run once by default
-    frameworks: [ 'chai', 'mocha' ], //use the mocha test framework
+    singleRun: true,
+    frameworks: [ 'chai', 'mocha' ],
     plugins: [
-     'karma-phantomjs-launcher',
      'karma-chai',
+     'karma-mocha-reporter',
      'karma-mocha',
+     'karma-phantomjs-launcher',
      'karma-sourcemap-loader',
      'karma-webpack',
     ],
     files: [
-      'webpack.tests.config.js' //just load this file
+      'tests.bundle.js'
     ],
     preprocessors: {
-      'webpack.tests.config.js': [ 'webpack', 'sourcemap' ] //preprocess with webpack and our sourcemap loader
+      'tests.bundle.js': [ 'webpack', 'sourcemap' ]
     },
-    reporters: [ 'dots' ], //report results in this format
+    reporters: [ 'mocha' ],
     singleRun: true,
-    webpack: { //kind of a copy of your webpack config
-      devtool: 'inline-source-map', //just do inline source maps instead of the default
+    webpack: {
+      devtool: 'inline-source-map',
       module: {
         loaders: [
           { test: /\.js$/, loader: 'babel-loader' }
         ],
-        plugins: [
-          new webpack.ProvidePlugin({
-            'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
-          })
-        ]
       }
     },
     webpackServer: {
-      noInfo: true //please don't spam the console when running in karma!
+      noInfo: true
     }
   });
 };

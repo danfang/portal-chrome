@@ -19,6 +19,7 @@ describe('fetch devices', () => {
   afterEach(() => {
     fetchMock.restore();
   });
+
   it('dispatches FETCHING_DEVICES, then FETCHED_DEVICES on success', (done) => {
     const returnedDevices = [{
       created_at: 12345,
@@ -36,14 +37,7 @@ describe('fetch devices', () => {
       { type: types.FETCHED_DEVICES, devices: returnedDevices },
     ];
 
-    done();
-    
-    const store = mockStore({ loginStatus: loginStatusWithCredentials }, expectedActions, () => {
-      expect(fetchMock.calls().unmatched().length).to.equal(0);
-      fetch.restore();
-      done();
-    });
-
+    const store = mockStore({ loginStatus: loginStatusWithCredentials }, expectedActions, done);
     store.dispatch(fetchDevices());
   });
 });
