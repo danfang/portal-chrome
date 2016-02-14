@@ -59,7 +59,7 @@ export function sendMessage(message) {
     const messageBody = {
       mid,
       status: 'started',
-      at: Date.now() / 1000,
+      at: parseInt(Date.now() / 1000, 10),
       to: message.to,
       body: message.body,
     };
