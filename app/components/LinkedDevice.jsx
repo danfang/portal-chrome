@@ -33,9 +33,10 @@ export default class LinkedDevice extends Component {
 
 LinkedDevice.propTypes = {
   device: PropTypes.shape({
+    device_id: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    updated_at: PropTypes.number.isRequired,
-    created_at: PropTypes.number.isRequired,
+    updated_at: PropTypes.number,
+    created_at: PropTypes.number,
   }),
 };

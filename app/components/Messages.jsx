@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import NativeListener from 'react-native-listener';
 
 import { DEBUG_MODE, NEW_MESSAGE_INDEX } from '../const';
-import Message from './Message';
+import MessageList from './MessageList';
 import { sendMessage } from '../actions/messageActions';
 
 class Messages extends Component {
@@ -62,13 +62,11 @@ class Messages extends Component {
         </div>
       );
     }
-    let messageElements = '';
+    let messages = [];
     let messageInputValue = '';
     if (this.props.currentThread) {
-      const { messages, messageInput } = this.props.currentThread;
-      messageElements = messages.map((message) =>
-        <Message key={message.mid} message={message} />
-      );
+      const { messageInput } = this.props.currentThread;
+      messages = this.props.currentThread.messages;
       messageInputValue = messageInput;
     }
     const messageInputElement = (
@@ -87,7 +85,7 @@ class Messages extends Component {
           <button className="mdl-snackbar__action" type="button"></button>
         </div>
         <div ref={r => this._messageHistory = r} id="message-history">
-          { messageElements }
+          <MessageList messages={messages} />
         </div>
         { toField }
         <div id="message-input-container" className="mdl-textfield mdl-js-textfield">

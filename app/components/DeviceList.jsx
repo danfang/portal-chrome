@@ -6,7 +6,7 @@ export default class DeviceList extends Component {
   render() {
     const { linkedDevices } = this.props;
     const deviceElements = linkedDevices.map(device =>
-      <LinkedDevice key={device.created_at} device={device} />
+      device ? <LinkedDevice key={device.created_at} device={device} /> : ''
     );
     return (
       <div>

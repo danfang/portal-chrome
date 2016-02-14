@@ -1,5 +1,6 @@
 import { SENDER_ID, portalAPIEndpoint } from '../const';
 import { authenticatedRequest, checkResponse } from './helpers';
+import { syncMessages } from './messageActions';
 import * as types from '../constants/ActionTypes';
 
 const devicesEndpoint = `${portalAPIEndpoint}/user/devices`;
@@ -12,9 +13,8 @@ function unregisterDevice() {
   return { type: types.UNREGISTER_DEVICE };
 }
 
-function registeredDevice(keys) {
-  const { encryptionKey, notificationKey } = keys;
-  return { type: types.REGISTERED_DEVICE, encryptionKey, notificationKey };
+function registeredDevice(device, encryptionKey, notificationKey) {
+  return { type: types.REGISTERED_DEVICE, device, encryptionKey, notificationKey };
 }
 
 function registrationError(error) {
@@ -29,18 +29,42 @@ function fetchedDevices(devices) {
   return { type: types.FETCHED_DEVICES, devices };
 }
 
+function listeningMessages() {
+  return { type: types.LISTENING_MESSAGES };
+}
+
+function messageReceived(data) {
+  return { type: types.MESSAGE_RECEIVED, data };
+}
+
+function listenGCM() {
+  return dispatch => {
+    dispatch(listeningMessages());
+    chrome.gcm.onMessage.addListener((message) => {
+      console.log(message);
+      dispatch(messageReceived(message.data));
+    });
+  };
+}
+
 function sendRegistrationId(credentials, registrationId) {
-  return dispatch =>
-    fetch(devicesEndpoint, authenticatedRequest(credentials, 'POST', {
+  return dispatch => {
+    const newDevice = {
       name: 'Chrome OSX',
       registration_id: registrationId,
       type: 'chrome',
-    }))
+    };
+    fetch(devicesEndpoint, authenticatedRequest(credentials, 'POST', newDevice))
     .then(checkResponse)
-    .then(response => dispatch(registeredDevice({
-      encryptionKey: response.encryption_key,
-      notificationKey: response.notification_key,
-    })));
+    .then(response => {
+      dispatch(registeredDevice({
+        ...newDevice,
+        device_id: response.device_id,
+      }, response.encryption_key, response.notification_key));
+      dispatch(listenGCM());
+      dispatch(syncMessages());
+    });
+  };
 }
 
 export function register() {

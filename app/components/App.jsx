@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { signOut } from '../actions/loginActions';
 
 import { register, fetchDevices } from '../actions/deviceActions';
+import { syncMessages } from '../actions/messageActions';
 import Threads from './Threads';
 import Messages from './Messages';
 import Header from './Header';
@@ -17,6 +18,8 @@ class App extends Component {
     const { dispatch, registered } = this.props;
     if (!registered) {
       dispatch(register());
+    } else {
+      dispatch(syncMessages());
     }
     dispatch(fetchDevices());
     componentHandler.upgradeAllRegistered();
@@ -54,7 +57,7 @@ App.propTypes = {
 };
 
 function linkedPhoneExists(devices) {
-  return devices.find(device => device.type === 'phone') !== undefined;
+  return devices.find(device => device && device.type === 'phone') !== undefined;
 }
 
 function mapStateToProps(state) {

@@ -28,7 +28,7 @@ export default class Thread extends Component {
     if (index !== NEW_MESSAGE_INDEX) {
       to = thread.contact.name || thread.phoneNumber;
       const lastMessage = thread.messages[thread.messages.length - 1];
-      time = moment(lastMessage.at).fromNow();
+      time = moment(lastMessage.at * 1000).fromNow();
       messagePreview = lastMessage.body.substring(0, maxMessagePreviewLength);
       if (messagePreview.length === maxMessagePreviewLength) {
         messagePreview = `${messagePreview.trim()}...`;
