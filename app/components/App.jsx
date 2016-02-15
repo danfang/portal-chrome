@@ -1,9 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { signOut } from '../actions/loginActions';
 
-import { register, fetchDevices } from '../actions/deviceActions';
-import { syncMessages } from '../actions/messageActions';
+import { register, fetchDevices } from '../actions/devices';
+import { syncMessages } from '../actions/messages';
+import { signOut } from '../actions/login';
+
 import Threads from './Threads';
 import Messages from './Messages';
 import Header from './Header';
@@ -13,6 +14,7 @@ class App extends Component {
   constructor() {
     super();
     this.signOut = this.signOut.bind(this);
+    this.flushData = this.flushData.bind(this);
   }
   componentDidMount() {
     const { dispatch, registered } = this.props;
@@ -24,6 +26,10 @@ class App extends Component {
     dispatch(fetchDevices());
     componentHandler.upgradeAllRegistered();
   }
+  flushData() {
+    const { dispatch } = this.props;
+    dispatch({ type: 'FLUSH_DATA' });
+  }
   signOut() {
     const { dispatch } = this.props;
     dispatch(signOut());
@@ -32,7 +38,7 @@ class App extends Component {
     const { isLinkedToPhone } = this.props;
     return (
       <div id="app" refs="app" className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-        <Header { ...this.props } />
+        <Header { ...this.props } flushData={this.flushData} />
         <Menu { ...this.props } signOutOnClick={this.signOut} />
         <main className="mdl-layout__content">
           <div className="page-content">

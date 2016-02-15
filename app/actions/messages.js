@@ -2,7 +2,8 @@ import uuid from 'node-uuid';
 import crypto from 'sjcl';
 
 import { SENDER_ID, portalAPIEndpoint } from '../const';
-import { authenticatedRequest, checkResponse } from './helpers';
+import { encrypt } from '../util/encryption';
+import { authenticatedRequest, checkResponse } from '../util/request';
 import * as types from '../constants/ActionTypes';
 
 const syncMessagesEndpoint = `${portalAPIEndpoint}/user/messages/sync`;
@@ -41,14 +42,6 @@ export function syncMessages() {
   };
 }
 
-function getEncryptedString(bits, message) {
-  const obj = JSON.parse(crypto.encrypt(bits, message));
-  return JSON.stringify({
-    iv: obj.iv,
-    ct: obj.ct,
-  });
-}
-
 export function sendMessage(message) {
   return (dispatch, getState) => {
     const { notificationKey, encryptionKey } = getState().devices;
@@ -66,8 +59,8 @@ export function sendMessage(message) {
     const bits = crypto.codec.hex.toBits(encryptionKey);
     const encryptedBody = {
       ...messageBody,
-      to: getEncryptedString(bits, message.to),
-      body: getEncryptedString(bits, message.body),
+      to: encrypt(bits, message.to),
+      body: encrypt(bits, message.body),
     };
     const data = {
       type: 'message',

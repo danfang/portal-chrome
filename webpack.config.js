@@ -37,21 +37,26 @@ module.exports = {
       },
       {
         test: /\.(png|woff2|woff|ttf)$/,
-        loader: 'file?name=assets/[name].[ext]'
+        loader: 'file?name=assets/[name].[ext]',
       },
       {
         test: /\.css$/,
-        loaders: ['style', 'css']
+        loaders: ['style', 'css'],
+        include: PATHS.app,
       },
       {
         test: /\.scss$/,
-        loaders: ['style', 'css', 'sass']
+        loaders: ['style', 'css', 'sass'],
+        include: PATHS.app,
       }
     ]
   },
   plugins: [
     new webpack.ProvidePlugin({
       'fetch': 'imports?this=>global!exports?global.fetch!whatwg-fetch'
-    })
+    }),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': '"production"'
+    }),
   ]
 };

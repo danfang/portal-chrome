@@ -4,7 +4,7 @@ import NativeListener from 'react-native-listener';
 
 import { DEBUG_MODE, NEW_MESSAGE_INDEX } from '../const';
 import MessageList from './MessageList';
-import { sendMessage } from '../actions/messageActions';
+import { sendMessage } from '../actions/messages';
 
 class Messages extends Component {
   constructor() {

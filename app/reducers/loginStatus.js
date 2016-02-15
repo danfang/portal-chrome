@@ -4,11 +4,8 @@ export default function loginStatus(state = {
   loggedIn: false,
   inProgress: false,
 }, action) {
-  const { type, credentials, store } = action;
+  const { type, credentials } = action;
   switch (type) {
-    case types.RESTORE_LOGIN_STATUS:
-      return store;
-
     case types.GOOGLE_LOGIN:
       return { loggedIn: false, inProgress: true };
 

@@ -1,5 +1,5 @@
 import { portalAPIEndpoint } from '../const';
-import { authenticatedRequest, checkResponse } from './helpers';
+import { authenticatedRequest, checkResponse } from '../util/request';
 import * as types from '../constants/ActionTypes';
 
 // Login endpoint

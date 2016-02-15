@@ -1,6 +1,7 @@
 import crypto from 'sjcl';
 
 import { NEW_MESSAGE_INDEX } from '../const';
+import { decrypt } from '../util/encryption';
 import * as types from '../constants/ActionTypes';
 
 const initialState = {
@@ -26,8 +27,8 @@ function receiveMessages(state, messages, encryptionKey) {
   messages.forEach((m) => {
     const message = m;
     if (encryptionKey) {
-      message.to = crypto.decrypt(decryptBits, message.to);
-      message.body = crypto.decrypt(decryptBits, message.body);
+      message.to = decrypt(decryptBits, message.to);
+      message.body = decrypt(decryptBits, message.body);
     }
     // Find the thread to insert the new message into
     const index = newThreads.findIndex(thread =>
@@ -77,6 +78,9 @@ function receiveMessages(state, messages, encryptionKey) {
 export default (state = initialState, action) => {
   const { message, messages, encryptionKey } = action;
   switch (action.type) {
+    case types.FLUSH_DATA:
+      return initialState;
+
     case types.THREAD_SELECTED:
       return {
         ...state,

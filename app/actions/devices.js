@@ -1,6 +1,6 @@
 import { SENDER_ID, portalAPIEndpoint } from '../const';
-import { authenticatedRequest, checkResponse } from './helpers';
-import { syncMessages } from './messageActions';
+import { authenticatedRequest, checkResponse } from '../util/request';
+import { syncMessages } from './messages';
 import * as types from '../constants/ActionTypes';
 
 const devicesEndpoint = `${portalAPIEndpoint}/user/devices`;

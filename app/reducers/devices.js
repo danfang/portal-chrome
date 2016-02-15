@@ -15,6 +15,7 @@ export default (state = initialState, action) => {
   switch (type) {
     case types.SIGN_OUT:
       return initialState;
+
     case types.UNREGISTER_DEVICE:
       return {
         ...state,
@@ -25,12 +26,14 @@ export default (state = initialState, action) => {
           device.device_id !== state.device.device_id
         ),
       };
+
     case types.REGISTER_DEVICE:
       return {
         ...state,
         registered: false,
         registerInProgress: true,
       };
+
     case types.REGISTERED_DEVICE:
       const { device, notificationKey, encryptionKey } = action;
       return {
@@ -42,11 +45,13 @@ export default (state = initialState, action) => {
         encryptionKey,
         linkedDevices: [...state.linkedDevices, device],
       };
+
     case types.FETCHING_DEVICES:
       return {
         ...state,
         fetchingDevices: true,
       };
+
     case types.FETCHED_DEVICES:
       const { devices } = action;
       return {
@@ -54,6 +59,7 @@ export default (state = initialState, action) => {
         fetchingDevices: false,
         linkedDevices: devices,
       };
+
     default:
       return state;
   }

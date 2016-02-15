@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import NativeListener from 'react-native-listener';
 import DeviceList from './DeviceList';
 
 export default class Header extends Component {
@@ -45,8 +46,16 @@ export default class Header extends Component {
             <div className="mdl-tooltip mdl-tooltip--large" htmlFor="alert-registration-status">
               { statusDescription }
             </div>
-            {statusIcon}
+            { statusIcon }
           </a>
+          <NativeListener onClick={this.props.flushData}>
+            <a id="clear-messages" className="mdl-navigation__link" href="#">
+              <div className="mdl-tooltip mdl-tooltip--large" htmlFor="clear-messages">
+                Clear all messages
+              </div>
+              <i className="material-icons">clear</i>
+            </a>
+          </NativeListener>
           <DeviceList linkedDevices={linkedDevices} />
         </nav>
       </div>
@@ -56,6 +65,7 @@ export default class Header extends Component {
 }
 
 Header.propTypes = {
+  flushData: PropTypes.func,
   linkedDevices: PropTypes.array.isRequired,
   isLinkedToPhone: PropTypes.bool.isRequired,
   registered: PropTypes.bool.isRequired,

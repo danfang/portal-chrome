@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import NativeListener from 'react-native-listener';
 
-import { googleSignIn } from '../actions/loginActions';
+import { googleSignIn } from '../actions/login';
 import App from './App';
 
 class Root extends Component {
