@@ -2,6 +2,7 @@ import crypto from 'sjcl';
 
 const ENCRYPT_KEY_BITS = 256;
 const ENCRYPT_IV_BITS = 128;
+
 const CRYPTO_SETTINGS = { ks: ENCRYPT_KEY_BITS, ts: ENCRYPT_IV_BITS };
 
 export function encrypt(bits, message) {

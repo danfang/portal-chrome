@@ -1,13 +1,13 @@
-/* eslint-env es6, mocha */
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import fetchMock from 'fetch-mock';
 
 import { portalAPIEndpoint } from '../../app/const';
-import { fetchDevices } from '../../app/actions/deviceActions';
+import { fetchDevices } from '../../app/actions/devices';
 import * as types from '../../app/constants/ActionTypes';
 
 const mockStore = configureMockStore([thunk]);
+
 const loginStatusWithCredentials = {
   credentials: {
     userToken: 'token',

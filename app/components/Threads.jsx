@@ -15,7 +15,6 @@ class Threads extends Component {
     dispatch(selectThread(index));
   }
   render() {
-    // TODO: Add FeedbackThread
     const { currentThreadIndex, threads } = this.props;
     const threadElements = threads.map((thread, index) =>
       <Thread
