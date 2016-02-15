@@ -14,7 +14,7 @@ export const FETCHED_DEVICES = 'FETCHED_DEVICES';
 export const GOOGLE_LOGIN = 'GOOGLE_LOGIN';
 export const GOOGLE_LOGIN_ERROR = 'GOOGLE_LOGIN_ERROR';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-export const SIGN_OUT = 'SIGN_OUT';
+export const SIGNED_OUT = 'SIGNED_OUT';
 
 // Credential errors
 export const MISSING_CREDENTIALS = 'MISSING_CREDENTIALS';

@@ -1,9 +1,9 @@
-import { SENDER_ID, portalAPIEndpoint } from '../const';
+import { SENDER_ID, API_ENDPOINT } from '../constants/AppConstants';
 import { authenticatedRequest, checkResponse } from '../util/request';
 import { syncMessages } from './messages';
 import * as types from '../constants/ActionTypes';
 
-const devicesEndpoint = `${portalAPIEndpoint}/user/devices`;
+const devicesEndpoint = `${API_ENDPOINT}/user/devices`;
 
 function registerDevice() {
   return { type: types.REGISTER_DEVICE };

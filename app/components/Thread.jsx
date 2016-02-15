@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import NativeListener from 'react-native-listener';
 import moment from 'moment';
 
-import { NEW_MESSAGE_INDEX } from '../const';
+import { NEW_MESSAGE_INDEX } from '../constants/AppConstants';
 
 const maxMessagePreviewLength = 45;
 
@@ -26,7 +26,7 @@ export default class Thread extends Component {
     let to = 'New Message';
     let messagePreview = '';
     if (index !== NEW_MESSAGE_INDEX) {
-      to = thread.contact.name || thread.phoneNumber;
+      to = thread.contact;
       const lastMessage = thread.messages[thread.messages.length - 1];
       time = moment(lastMessage.at * 1000).fromNow();
       messagePreview = lastMessage.body.substring(0, maxMessagePreviewLength);

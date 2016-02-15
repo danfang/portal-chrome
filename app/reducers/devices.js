@@ -1,19 +1,23 @@
 import * as types from '../constants/ActionTypes';
 
 const initialState = {
+  // Progress state
   registered: false,
   registerInProgress: false,
-  device: null,
+  fetchingDevices: false,
+
+  // Credentials
   notificationKey: null,
   encryptionKey: null,
-  fetchingDevices: false,
+
+  // User devices
+  device: null,
   linkedDevices: [],
 };
 
 export default (state = initialState, action) => {
-  const { type } = action;
-  switch (type) {
-    case types.SIGN_OUT:
+  switch (action.type) {
+    case types.SIGNED_OUT:
       return initialState;
 
     case types.UNREGISTER_DEVICE:
@@ -53,14 +57,12 @@ export default (state = initialState, action) => {
       };
 
     case types.FETCHED_DEVICES:
-      const { devices } = action;
       return {
         ...state,
         fetchingDevices: false,
-        linkedDevices: devices,
+        linkedDevices: action.devices,
       };
 
-    default:
-      return state;
+    default: return state;
   }
 };

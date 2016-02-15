@@ -26,6 +26,15 @@
     width: 100%;
   }
 
+  #message-to-container {
+    padding-left: 10px;
+    display: block;
+
+    .mdl-textfield__input, .mdl-textfield__label {
+      padding-left: 20px;
+    }
+  }
+
   #message-input-container {
     background-color: white;
     border-top: 1px solid #ddd;

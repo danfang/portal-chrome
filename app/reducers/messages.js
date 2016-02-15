@@ -1,6 +1,6 @@
 import crypto from 'sjcl';
 
-import { NEW_MESSAGE_INDEX } from '../const';
+import { NEW_MESSAGE_INDEX } from '../constants/AppConstants';
 import { decrypt } from '../util/encryption';
 import * as types from '../constants/ActionTypes';
 
@@ -10,35 +10,31 @@ const initialState = {
   lastMessageID: null,
 };
 
-function receiveMessages(state, messages, encryptionKey) {
+function receiveMessages(state, messages, decryptBits) {
   if (messages.length === 0) {
     return state;
   }
-  const { threads } = state;
-  let decryptBits;
-  if (encryptionKey) {
-    decryptBits = crypto.codec.hex.toBits(encryptionKey);
-  }
   // Make a mutable copy of the old thread state
-  const newThreads = JSON.parse(JSON.stringify(threads));
+  const newThreads = JSON.parse(JSON.stringify(state.threads));
+
   let lastMessageTime = 0;
   let lastMessageID;
   let lastMessageIndex = -1;
+
   messages.forEach((m) => {
     const message = m;
-    if (encryptionKey) {
+
+    // Decrypt the message, if necessary
+    if (decryptBits) {
       message.to = decrypt(decryptBits, message.to);
       message.body = decrypt(decryptBits, message.body);
     }
     // Find the thread to insert the new message into
-    const index = newThreads.findIndex(thread =>
-      thread.phoneNumber === message.to || thread.contact.id === message.to
-    );
+    const index = newThreads.findIndex(thread => thread.contact === message.to);
     if (index === -1) {
       // Message belongs to a new thread
       newThreads.push({
-        contact: {},
-        phoneNumber: message.to,
+        contact: message.to,
         messages: [message],
         messageInput: '',
       });
@@ -76,8 +72,10 @@ function receiveMessages(state, messages, encryptionKey) {
 }
 
 export default (state = initialState, action) => {
-  const { message, messages, encryptionKey } = action;
   switch (action.type) {
+    case types.SIGNED_OUT:
+      return initialState;
+
     case types.FLUSH_DATA:
       return initialState;
 
@@ -88,13 +86,15 @@ export default (state = initialState, action) => {
       };
 
     case types.MESSAGE_RECEIVED:
-      return receiveMessages(state, [message], encryptionKey);
+      return receiveMessages(state, [action.message],
+        crypto.codec.hex.toBits(action.encryptionKey));
 
     case types.MESSAGES_RECEIVED:
-      return receiveMessages(state, messages, encryptionKey);
+      return receiveMessages(state, action.messages,
+        crypto.codec.hex.toBits(action.encryptionKey));
 
     case types.SENDING_MESSAGE:
-      return receiveMessages(state, [message]);
+      return receiveMessages(state, [action.message]);
 
     default: return state;
   }

@@ -2,7 +2,7 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import fetchMock from 'fetch-mock';
 
-import { portalAPIEndpoint } from '../../app/const';
+import { API_ENDPOINT } from '../../app/constants/AppConstants';
 import { fetchDevices } from '../../app/actions/devices';
 import * as types from '../../app/constants/ActionTypes';
 
@@ -28,7 +28,7 @@ describe('fetch devices', () => {
       updated_at: 12345,
     }];
 
-    fetchMock.mock(`${portalAPIEndpoint}/user/devices`, 'GET', {
+    fetchMock.mock(`${API_ENDPOINT}/user/devices`, 'GET', {
       devices: returnedDevices,
     });
 

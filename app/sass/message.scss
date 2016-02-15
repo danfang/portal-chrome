@@ -5,4 +5,16 @@
   .mdl-card {
     min-height: 0;
   }
+
+  .date {
+    text-align: right;
+    font-size: .8em;
+    color: #999;
+
+    .material-icons {
+      font-size: 15px;
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+  }
 }

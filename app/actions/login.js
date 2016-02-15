@@ -1,12 +1,12 @@
-import { portalAPIEndpoint } from '../const';
+import { API_ENDPOINT } from '../constants/AppConstants';
 import { authenticatedRequest, checkResponse } from '../util/request';
 import * as types from '../constants/ActionTypes';
 
 // Login endpoint
-const loginEndpoint = `${portalAPIEndpoint}/login/google`;
+const loginEndpoint = `${API_ENDPOINT}/login/google`;
 
 // Signout endpoint
-const signoutEndpoint = `${portalAPIEndpoint}/user/signout`;
+const signoutEndpoint = `${API_ENDPOINT}/user/signout`;
 
 // Manifest constants
 const manifest = chrome.runtime.getManifest();
@@ -34,19 +34,23 @@ function successfulLogin(credentials) {
   return { type: types.LOGIN_SUCCESS, credentials };
 }
 
-function successfulSignout() {
-  return { type: types.SIGN_OUT };
+function signedOut() {
+  return { type: types.SIGNED_OUT };
 }
 
 export function signOut() {
   return (dispatch, getState) => {
-    const { device } = getState().devices;
-    const credentials = getState().loginStatus.credentials;
-    return fetch(signoutEndpoint, authenticatedRequest(credentials, 'POST', {
+    const state = getState();
+    const { device } = state.devices;
+    const { credentials } = state.loginStatus;
+
+    dispatch(signedOut());
+
+    // Initiate a signout API request
+    fetch(signoutEndpoint, authenticatedRequest(credentials, 'POST', {
       device_id: device ? device.device_id : '0',
     }))
-    .then(checkResponse)
-    .then(() => dispatch(successfulSignout()));
+    .then(checkResponse);
   };
 }
 

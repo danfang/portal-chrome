@@ -35,7 +35,6 @@ class App extends Component {
     dispatch(signOut());
   }
   render() {
-    const { isLinkedToPhone } = this.props;
     return (
       <div id="app" refs="app" className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
         <Header { ...this.props } flushData={this.flushData} />
@@ -44,7 +43,7 @@ class App extends Component {
           <div className="page-content">
             <div className="mdl-grid">
               <Threads />
-              <Messages isDisabled={ !isLinkedToPhone }/>
+              <Messages />
             </div>
           </div>
         </main>
@@ -58,13 +57,8 @@ App.propTypes = {
   registerInProgress: PropTypes.bool.isRequired,
   fetchingDevices: PropTypes.bool.isRequired,
   linkedDevices: PropTypes.array.isRequired,
-  isLinkedToPhone: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
 };
-
-function linkedPhoneExists(devices) {
-  return devices.find(device => device && device.type === 'phone') !== undefined;
-}
 
 function mapStateToProps(state) {
   const { devices } = state;
@@ -73,7 +67,6 @@ function mapStateToProps(state) {
     registerInProgress: devices.registerInProgress,
     fetchingDevices: devices.fetchingDevices,
     linkedDevices: devices.linkedDevices,
-    isLinkedToPhone: linkedPhoneExists(devices.linkedDevices),
   };
 }
 export default connect(mapStateToProps)(App);

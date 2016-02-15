@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import { NEW_MESSAGE_INDEX } from '../const';
+import { NEW_MESSAGE_INDEX } from '../constants/AppConstants';
 import { selectThread } from '../actions/messages';
 import Thread from './Thread';
 

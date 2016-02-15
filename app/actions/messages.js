@@ -1,13 +1,14 @@
 import uuid from 'node-uuid';
 import crypto from 'sjcl';
 
-import { SENDER_ID, portalAPIEndpoint } from '../const';
-import { encrypt } from '../util/encryption';
-import { authenticatedRequest, checkResponse } from '../util/request';
 import * as types from '../constants/ActionTypes';
+import { SENDER_ID, API_ENDPOINT } from '../constants/AppConstants';
+import { authenticatedRequest, checkResponse } from '../util/request';
+import { encrypt } from '../util/encryption';
 
-const syncMessagesEndpoint = `${portalAPIEndpoint}/user/messages/sync`;
-const messageHistoryEndpoint = `${portalAPIEndpoint}/user/messages/history`;
+const syncMessagesEndpoint = `${API_ENDPOINT}/user/messages/sync`;
+const messageHistoryEndpoint = `${API_ENDPOINT}/user/messages/history`;
+const gcmUpstream = `${SENDER_ID}@gcm.googleapis.com`;
 
 function sendingMessage(message) {
   return { type: types.SENDING_MESSAGE, message };
@@ -27,65 +28,70 @@ export function selectThread(index) {
 
 export function syncMessages() {
   return (dispatch, getState) => {
-    const lastMessageID = getState().messages.lastMessageID;
-    const credentials = getState().loginStatus.credentials;
-    const encryptionKey = getState().devices.encryptionKey;
+    const state = getState();
+    const lastMessageID = state.messages.lastMessageID;
+    const credentials = state.loginStatus.credentials;
+    const encryptionKey = state.devices.encryptionKey;
+    // If we have a latest message, sync messages
     if (lastMessageID) {
       fetch(`${syncMessagesEndpoint}/${lastMessageID}`, authenticatedRequest(credentials, 'GET'))
       .then(checkResponse)
       .then(response => dispatch(newMessages(response.messages, encryptionKey)));
-    } else {
-      fetch(messageHistoryEndpoint, authenticatedRequest(credentials, 'GET'))
-      .then(checkResponse)
-      .then(response => dispatch(newMessages(response.messages, encryptionKey)));
+      return;
     }
+    // Otherwise, fetch message history
+    fetch(messageHistoryEndpoint, authenticatedRequest(credentials, 'GET'))
+    .then(checkResponse)
+    .then(response => dispatch(newMessages(response.messages, encryptionKey)));
   };
 }
 
-export function sendMessage(message) {
+function makeMessage(to, body) {
+  return {
+    mid: uuid.v4(),
+    status: 'started',
+    at: parseInt(Date.now() / 1000, 10),
+    to,
+    body,
+  };
+}
+
+function encryptedPayload(encryptionKey, message) {
+  const bits = crypto.codec.hex.toBits(encryptionKey);
+  return {
+    ...message,
+    to: encrypt(bits, message.to),
+    body: encrypt(bits, message.body),
+  };
+}
+
+function gcmMessage(to, data) {
+  return {
+    messageId: uuid.v4(),
+    destinationId: to,
+    data,
+  };
+}
+
+export function sendMessage(input) {
   return (dispatch, getState) => {
     const { notificationKey, encryptionKey } = getState().devices;
-    if (!notificationKey || !encryptionKey) {
-      throw new Error('Missing notification or encryption keys.');
-    }
-    const mid = uuid.v4();
-    const messageBody = {
-      mid,
-      status: 'started',
-      at: parseInt(Date.now() / 1000, 10),
-      to: message.to,
-      body: message.body,
-    };
-    const bits = crypto.codec.hex.toBits(encryptionKey);
-    const encryptedBody = {
-      ...messageBody,
-      to: encrypt(bits, message.to),
-      body: encrypt(bits, message.body),
-    };
+    const message = makeMessage(input.to, input.body);
+    const payload = encryptedPayload(encryptionKey, message);
     const data = {
       type: 'message',
-      payload: JSON.stringify(encryptedBody),
+      payload: JSON.stringify(payload),
     };
-    const groupMessage = {
-      messageId: uuid.v4(),
-      destinationId: notificationKey,
-      data,
-    };
-    dispatch(sendingMessage(messageBody));
+    const groupMessage = gcmMessage(notificationKey, data);
+    dispatch(sendingMessage(message));
+
+    // Send to other devices via GCM
     chrome.gcm.send(groupMessage, () => {
-      if (chrome.runtime.lastError) {
-        throw new Error('error sending message');
-      }
-      const upstreamMessage = {
-        messageId: uuid.v4(),
-        destinationId: `${SENDER_ID}@gcm.googleapis.com`,
-        data,
-      };
+      const upstreamMessage = gcmMessage(gcmUpstream, data);
+
+      // Send to GCM server upstream
       chrome.gcm.send(upstreamMessage, () => {
-        if (chrome.runtime.lastError) {
-          throw new Error('error sending message');
-        }
-        dispatch(sentMessage(mid));
+        dispatch(sentMessage(message.mid));
         Promise.resolve();
       });
     });

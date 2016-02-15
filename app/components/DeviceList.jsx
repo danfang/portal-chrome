@@ -11,12 +11,8 @@ export default class DeviceList extends Component {
     return (
       <div>
         <div id="device-list-menu" className="mdl-button mdl-js-button">
-          <span style={{ color: 'white' }} className="link-description">
-            My Devices
-          </span>
-          <i style={{ color: 'white' }} className="material-icons">
-            devices
-          </i>
+          <span style={{ color: 'white' }} className="link-description">My Devices</span>
+          <i style={{ color: 'white' }} className="material-icons">devices</i>
         </div>
         <ul
           className="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
