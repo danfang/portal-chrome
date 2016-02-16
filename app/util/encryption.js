@@ -1,22 +1,18 @@
-import crypto from 'sjcl';
+import CryptoJS from "crypto-js";
 
-const ENCRYPT_KEY_BITS = 256;
 const ENCRYPT_IV_BITS = 128;
 
-const CRYPTO_SETTINGS = { ks: ENCRYPT_KEY_BITS, ts: ENCRYPT_IV_BITS };
-
-export function encrypt(bits, message) {
-  const obj = JSON.parse(crypto.encrypt(bits, message, CRYPTO_SETTINGS));
-  const iv = crypto.codec.base64.toBits(obj.iv);
-  const ct = crypto.codec.base64.toBits(obj.ct);
-  const res = iv.concat(ct);
-  return crypto.codec.base64.fromBits(res);
+export function encrypt(encryptionKey, input) {
+  const iv = CryptoJS.lib.WordArray.random(ENCRYPT_IV_BITS / 8);
+  const key = CryptoJS.enc.Hex.parse(encryptionKey);
+  const ct = CryptoJS.AES.encrypt(input, key, { iv }).ciphertext;
+  return iv.concat(ct).toString(CryptoJS.enc.Base64);
 }
 
-export function decrypt(bits, encrypted) {
-  const total = crypto.codec.base64.toBits(encrypted);
-  const iv = crypto.codec.base64.fromBits(crypto.bitArray.bitSlice(total, 0, ENCRYPT_IV_BITS));
-  const ct = crypto.codec.base64.fromBits(crypto.bitArray.bitSlice(total, ENCRYPT_IV_BITS));
-  const obj = JSON.stringify({ ...CRYPTO_SETTINGS, iv, ct });
-  return crypto.decrypt(bits, obj);
+export function decrypt(encryptionKey, input) {
+  const key = CryptoJS.enc.Hex.parse(encryptionKey);
+  const total = CryptoJS.enc.Base64.parse(input).words;
+  const iv = CryptoJS.lib.WordArray.create(total.slice(0, ENCRYPT_IV_BITS / 32));
+  const ct = CryptoJS.lib.WordArray.create(total.slice(ENCRYPT_IV_BITS / 32));;
+  return CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt({ ciphertext: ct }, key, { iv }));
 }

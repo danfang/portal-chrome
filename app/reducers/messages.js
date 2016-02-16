@@ -1,5 +1,3 @@
-import crypto from 'sjcl';
-
 import { NEW_MESSAGE_INDEX } from '../constants/AppConstants';
 import { decrypt } from '../util/encryption';
 import * as types from '../constants/ActionTypes';
@@ -10,7 +8,7 @@ const initialState = {
   lastMessageID: null,
 };
 
-function receiveMessages(state, messages, decryptBits) {
+function receiveMessages(state, messages, encryptionKey) {
   if (messages.length === 0) {
     return state;
   }
@@ -25,10 +23,11 @@ function receiveMessages(state, messages, decryptBits) {
     const message = m;
 
     // Decrypt the message, if necessary
-    if (decryptBits) {
-      message.to = decrypt(decryptBits, message.to);
-      message.body = decrypt(decryptBits, message.body);
+    if (encryptionKey) {
+      message.to = decrypt(encryptionKey, message.to);
+      message.body = decrypt(encryptionKey, message.body);
     }
+
     // Find the thread to insert the new message into
     const index = newThreads.findIndex(thread => thread.contact === message.to);
     if (index === -1) {
@@ -43,9 +42,11 @@ function receiveMessages(state, messages, decryptBits) {
       const newThread = newThreads[index];
       let discard = false;
       let messageIndex = 0;
+
       // Find the index to insert the new message into
       for (let i = newThread.messages.length - 1; i >= 0; i--) {
         const curMessage = newThread.messages[i];
+
         // Found place to insert
         if (curMessage.at <= message.at) {
           // This is a duplicate of an existing message, so discard it.
@@ -57,6 +58,7 @@ function receiveMessages(state, messages, decryptBits) {
       // Insert the message in its proper chronological order
       if (!discard) newThread.messages.splice(messageIndex, 0, message);
     }
+
     // Update properties based on the latest message
     if (message.at > lastMessageTime) {
       lastMessageTime = message.at;
@@ -86,12 +88,10 @@ export default (state = initialState, action) => {
       };
 
     case types.MESSAGE_RECEIVED:
-      return receiveMessages(state, [action.message],
-        crypto.codec.hex.toBits(action.encryptionKey));
+      return receiveMessages(state, [action.message], action.encryptionKey);
 
     case types.MESSAGES_RECEIVED:
-      return receiveMessages(state, action.messages,
-        crypto.codec.hex.toBits(action.encryptionKey));
+      return receiveMessages(state, action.messages, action.encryptionKey);
 
     case types.SENDING_MESSAGE:
       return receiveMessages(state, [action.message]);

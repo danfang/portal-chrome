@@ -1,5 +1,4 @@
 import uuid from 'node-uuid';
-import crypto from 'sjcl';
 
 import * as types from '../constants/ActionTypes';
 import { SENDER_ID, API_ENDPOINT } from '../constants/AppConstants';
@@ -57,11 +56,10 @@ function makeMessage(to, body) {
 }
 
 function encryptedPayload(encryptionKey, message) {
-  const bits = crypto.codec.hex.toBits(encryptionKey);
   return {
     ...message,
-    to: encrypt(bits, message.to),
-    body: encrypt(bits, message.body),
+    to: encrypt(encryptionKey, message.to),
+    body: encrypt(encryptionKey, message.body),
   };
 }
 
