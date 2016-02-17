@@ -1,8 +1,8 @@
 import React, { PropTypes, Component } from 'react';
-import { connect } from 'react-redux';
 import NativeListener from 'react-native-listener';
+import { connect } from 'react-redux';
 
-import { googleSignIn } from '../actions/login';
+import { googleSignIn } from '../actions/login_actions';
 
 function getStatusIcon(inProgress, error) {
   if (inProgress) {
@@ -51,7 +51,7 @@ Login.propTypes = {
 };
 
 function mapStateToProps(state) {
-  const { inProgress, credentials, error } = state.loginStatus;
+  const { inProgress, credentials, error } = state.login;
   return { inProgress, error, credentials };
 }
 

@@ -1,10 +1,10 @@
 import configureMockStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
 import fetchMock from 'fetch-mock';
+import thunk from 'redux-thunk';
 
-import { API_ENDPOINT, SENDER_ID } from '../../app/constants/AppConstants';
-import * as actions from '../../app/actions/devices';
-import * as types from '../../app/constants/ActionTypes';
+import { API_ENDPOINT, SENDER_ID } from '../../app/constants';
+import * as actions from '../../app/actions/device_actions';
+import * as types from '../../app/actions/types';
 
 const mockStore = configureMockStore([thunk]);
 
@@ -37,7 +37,7 @@ describe('action fetchDevices', () => {
       { type: types.FETCHED_DEVICES, devices: returnedDevices },
     ];
 
-    const store = mockStore({ loginStatus: { credentials } }, expectedActions, done);
+    const store = mockStore({ login: { credentials } }, expectedActions, done);
     store.dispatch(actions.fetchDevices());
   });
 });
@@ -74,7 +74,7 @@ describe('action registerGcm', () => {
 
     onRegisterStub.withArgs(registrationId).returns(onFinish);
 
-    const store = mockStore({ loginStatus: { credentials } }, expectedActions);
+    const store = mockStore({ login: { credentials } }, expectedActions);
     store.dispatch(actions.registerGcm(mockGcm, onRegisterStub));
   });
 });
@@ -87,7 +87,7 @@ describe('action registerDevice', () => {
   it('should dispatch an error on missing credentials', (done) => {
     fetchMock.mock(deviceEndpoint, 'POST', should.fail);
     const expectedActions = [{ type: types.REGISTRATION_ERROR, error: 'missing credentials' }];
-    const store = mockStore({ loginStatus: {} }, expectedActions, done);
+    const store = mockStore({ login: {} }, expectedActions, done);
     store.dispatch(actions.registerDevice('registrationId'));
   });
 
@@ -136,7 +136,7 @@ describe('action registerDevice', () => {
       done();
     });
 
-    const store = mockStore({ loginStatus: { credentials } }, expectedActions);
+    const store = mockStore({ login: { credentials } }, expectedActions);
 
     store.dispatch(actions.registerDevice(registrationId, onRegisterStub));
   });

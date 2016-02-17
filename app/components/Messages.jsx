@@ -1,10 +1,11 @@
 import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import NativeListener from 'react-native-listener';
+import { connect } from 'react-redux';
 
-import { DEBUG_MODE, NEW_MESSAGE_INDEX } from '../constants/AppConstants';
+import { DEBUG_MODE, NEW_MESSAGE_INDEX } from '../constants';
+import { sendMessage } from '../actions/message_actions';
+
 import Message from './Message';
-import { sendMessage } from '../actions/messages';
 
 const messageInputDisabledText = 'Unable to send messages. Please link a valid phone.';
 const messageToText = 'Enter a name or phone number...';

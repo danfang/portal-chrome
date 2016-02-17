@@ -1,13 +1,13 @@
-import { SENDER_ID, API_ENDPOINT } from '../constants/AppConstants';
+import { SENDER_ID, API_ENDPOINT } from '../constants';
 import { authenticatedRequest, checkResponse } from '../util/request';
-import { syncMessages } from './messages';
-import * as types from '../constants/ActionTypes';
+import { syncMessages } from './message_actions';
+import * as types from './types';
 
 const devicesEndpoint = `${API_ENDPOINT}/user/devices`;
 
 export function fetchDevices() {
   return (dispatch, getState) => {
-    const credentials = getState().loginStatus.credentials;
+    const credentials = getState().login.credentials;
     if (!credentials) {
       dispatch(registrationError('missing credentials'));
       return;
@@ -36,7 +36,7 @@ export function registerGcm(gcm = chrome.gcm, onregister = registerDevice) {
 
 export function registerDevice(registrationId, onregister = listenAndSync) {
   return (dispatch, getState) => {
-    const credentials = getState().loginStatus.credentials;
+    const credentials = getState().login.credentials;
     if (!credentials) {
       dispatch(registrationError('missing credentials'));
       return;

@@ -1,6 +1,6 @@
-import { NEW_MESSAGE_INDEX } from '../constants/AppConstants';
+import { NEW_MESSAGE_INDEX } from '../constants';
 import { decrypt } from '../util/encryption';
-import * as types from '../constants/ActionTypes';
+import * as types from '../actions/types';
 
 const initialState = {
   threads: [],

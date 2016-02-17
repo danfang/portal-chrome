@@ -1,8 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import NativeListener from 'react-native-listener';
+
 import DeviceList from './DeviceList';
 
-export default class Header extends Component {
+class Header extends Component {
   componentDidUpdate() {
     componentHandler.upgradeAllRegistered();
   }
@@ -71,3 +72,5 @@ Header.propTypes = {
   registered: PropTypes.bool.isRequired,
   registerInProgress: PropTypes.bool.isRequired,
 };
+
+export default Header;

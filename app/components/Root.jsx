@@ -15,7 +15,7 @@ Root.propTypes = {
 };
 
 function mapStateToProps(state) {
-  return { loggedIn: state.loginStatus.loggedIn };
+  return { loggedIn: state.login.loggedIn };
 }
 
 export default connect(mapStateToProps)(Root);

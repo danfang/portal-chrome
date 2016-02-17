@@ -1,6 +1,6 @@
-import { API_ENDPOINT } from '../constants/AppConstants';
+import { API_ENDPOINT } from '../constants';
 import { authenticatedRequest, checkResponse } from '../util/request';
-import * as types from '../constants/ActionTypes';
+import * as types from './types';
 
 // Login endpoint
 const loginEndpoint = `${API_ENDPOINT}/login/google`;
@@ -42,7 +42,7 @@ export function signOut() {
   return (dispatch, getState) => {
     const state = getState();
     const { device } = state.devices;
-    const { credentials } = state.loginStatus;
+    const { credentials } = state.login;
 
     dispatch(signedOut());
 

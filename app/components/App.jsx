@@ -1,12 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import { registerGcm, fetchDevices } from '../actions/devices';
-import { syncMessages } from '../actions/messages';
-import { signOut } from '../actions/login';
+import { registerGcm, fetchDevices } from '../actions/device_actions';
+import { syncMessages } from '../actions/message_actions';
+import { signOut } from '../actions/login_actions';
 
-import Threads from './Threads';
 import Messages from './Messages';
+import Threads from './Threads';
 import Header from './Header';
 import Menu from './Menu';
 
@@ -69,4 +69,5 @@ function mapStateToProps(state) {
     linkedDevices: devices.linkedDevices,
   };
 }
+
 export default connect(mapStateToProps)(App);

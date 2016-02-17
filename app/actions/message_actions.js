@@ -1,9 +1,9 @@
 import uuid from 'node-uuid';
 
-import * as types from '../constants/ActionTypes';
-import { SENDER_ID, API_ENDPOINT } from '../constants/AppConstants';
 import { authenticatedRequest, checkResponse } from '../util/request';
+import { SENDER_ID, API_ENDPOINT } from '../constants';
 import { encrypt } from '../util/encryption';
+import * as types from './types';
 
 const syncMessagesEndpoint = `${API_ENDPOINT}/user/messages/sync`;
 const messageHistoryEndpoint = `${API_ENDPOINT}/user/messages/history`;
@@ -13,8 +13,9 @@ export function syncMessages() {
   return (dispatch, getState) => {
     const state = getState();
     const lastMessageID = state.messages.lastMessageID;
-    const credentials = state.loginStatus.credentials;
+    const credentials = state.login.credentials;
     const encryptionKey = state.devices.encryptionKey;
+
     // If we have a latest message, sync messages
     if (lastMessageID) {
       return fetch(`${syncMessagesEndpoint}/${lastMessageID}`,

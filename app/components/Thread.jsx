@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import NativeListener from 'react-native-listener';
 import moment from 'moment';
 
-import { NEW_MESSAGE_INDEX } from '../constants/AppConstants';
+import { NEW_MESSAGE_INDEX } from '../constants';
 
 const maxMessagePreviewLength = 45;
 

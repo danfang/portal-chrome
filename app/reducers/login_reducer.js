@@ -1,11 +1,11 @@
-import * as types from '../constants/ActionTypes';
+import * as types from '../actions/types';
 
 const initialState = {
   loggedIn: false,
   inProgress: false,
 };
 
-export default function loginStatus(state = initialState, action) {
+export default (state = initialState, action) => {
   switch (action.type) {
     case types.GOOGLE_LOGIN:
       return { loggedIn: false, inProgress: true };
@@ -21,4 +21,4 @@ export default function loginStatus(state = initialState, action) {
 
     default: return state;
   }
-}
+};
