@@ -4,12 +4,13 @@ module.exports = function (config) {
   config.set({
     browsers: [ 'PhantomJS' ],
     singleRun: true,
-    frameworks: [ 'chai', 'mocha' ],
+    frameworks: [ 'chai', 'mocha', 'sinon' ],
     plugins: [
      'karma-chai',
      'karma-mocha-reporter',
      'karma-mocha',
      'karma-phantomjs-launcher',
+     'karma-sinon',
      'karma-sourcemap-loader',
      'karma-webpack',
     ],

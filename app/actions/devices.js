@@ -5,11 +5,84 @@ import * as types from '../constants/ActionTypes';
 
 const devicesEndpoint = `${API_ENDPOINT}/user/devices`;
 
-function registerDevice() {
+export function fetchDevices() {
+  return (dispatch, getState) => {
+    const credentials = getState().loginStatus.credentials;
+    if (!credentials) {
+      dispatch(registrationError('missing credentials'));
+      return;
+    }
+    dispatch(fetchingDevices());
+    fetch(devicesEndpoint, authenticatedRequest(credentials, 'GET'))
+      .then(checkResponse)
+      .then(response => dispatch(fetchedDevices(response.devices)))
+      .catch(ex => dispatch(registrationError(ex)));
+  };
+}
+
+export function registerGcm(gcm = chrome.gcm, onregister = registerDevice) {
+  return (dispatch) => {
+    dispatch(unregisteringDevice());
+
+    gcm.unregister(() => {
+      dispatch(registeringDevice());
+
+      gcm.register([SENDER_ID], (registrationId) => {
+        dispatch(onregister(registrationId));
+      });
+    });
+  };
+}
+
+export function registerDevice(registrationId, onregister = listenAndSync) {
+  return (dispatch, getState) => {
+    const credentials = getState().loginStatus.credentials;
+    if (!credentials) {
+      dispatch(registrationError('missing credentials'));
+      return;
+    }
+    const newDevice = {
+      name: 'Chrome OSX',
+      registration_id: registrationId,
+      type: 'chrome',
+    };
+    fetch(devicesEndpoint, authenticatedRequest(credentials, 'POST', newDevice))
+      .then(checkResponse)
+      .then(response => {
+        dispatch(registeredDevice({
+          ...newDevice,
+          device_id: response.device_id,
+        }, response.encryption_key, response.notification_key));
+        dispatch(onregister());
+      })
+      .catch(ex => {
+        console.log(ex);
+        dispatch(registrationError(ex));
+      });
+  };
+}
+
+export function listenAndSync() {
+  return dispatch => {
+    dispatch(listenGCM());
+    dispatch(syncMessages());
+  };
+}
+
+export function listenGCM(gcm = chrome.gcm) {
+  return dispatch => {
+    dispatch(listeningMessages());
+    gcm.onMessage.addListener((message) => {
+      dispatch(messageReceived(message.data));
+    });
+  };
+}
+
+function registeringDevice() {
   return { type: types.REGISTER_DEVICE };
 }
 
-function unregisterDevice() {
+function unregisteringDevice() {
   return { type: types.UNREGISTER_DEVICE };
 }
 
@@ -35,72 +108,4 @@ function listeningMessages() {
 
 function messageReceived(data) {
   return { type: types.MESSAGE_RECEIVED, data };
-}
-
-function listenGCM() {
-  return dispatch => {
-    dispatch(listeningMessages());
-    chrome.gcm.onMessage.addListener((message) => {
-      console.log(message);
-      dispatch(messageReceived(message.data));
-    });
-  };
-}
-
-function sendRegistrationId(credentials, registrationId) {
-  return dispatch => {
-    const newDevice = {
-      name: 'Chrome OSX',
-      registration_id: registrationId,
-      type: 'chrome',
-    };
-    fetch(devicesEndpoint, authenticatedRequest(credentials, 'POST', newDevice))
-    .then(checkResponse)
-    .then(response => {
-      dispatch(registeredDevice({
-        ...newDevice,
-        device_id: response.device_id,
-      }, response.encryption_key, response.notification_key));
-      dispatch(listenGCM());
-      dispatch(syncMessages());
-    });
-  };
-}
-
-export function register() {
-  return (dispatch, getState) => {
-    const credentials = getState().loginStatus.credentials;
-    if (!credentials) {
-      dispatch(registrationError('Missing credentials'));
-      Promise.resolve();
-      return;
-    }
-    dispatch(unregisterDevice());
-    chrome.gcm.unregister(() => {
-      dispatch(registerDevice());
-      chrome.gcm.register([SENDER_ID], (registrationId) => {
-        if (chrome.runtime.lastError) {
-          dispatch(registrationError('Error registering GCM Device'));
-          Promise.resolve();
-          return;
-        }
-        dispatch(sendRegistrationId(credentials, registrationId));
-      });
-    });
-  };
-}
-
-export function fetchDevices() {
-  return (dispatch, getState) => {
-    const credentials = getState().loginStatus.credentials;
-    if (!credentials) {
-      dispatch(registrationError('Missing credentials'));
-      Promise.resolve();
-      return;
-    }
-    dispatch(fetchingDevices());
-    fetch(devicesEndpoint, authenticatedRequest(credentials, 'GET'))
-    .then(checkResponse)
-    .then(response => dispatch(fetchedDevices(response.devices)));
-  };
 }

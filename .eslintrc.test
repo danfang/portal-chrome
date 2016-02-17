@@ -1,0 +1,17 @@
+{
+  "extends": "airbnb",
+  "ecmaFeatures": {
+    "experimentalObjectRestSpread": true
+  },
+  "env": {
+    "mocha": true,
+  },
+  "globals": {
+    "sinon": false,
+    "should": false,
+    "expect": false,
+  },
+  "rules": {
+    "no-unused-expressions": 0
+  }
+}

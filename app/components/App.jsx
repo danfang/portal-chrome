@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import { register, fetchDevices } from '../actions/devices';
+import { registerGcm, fetchDevices } from '../actions/devices';
 import { syncMessages } from '../actions/messages';
 import { signOut } from '../actions/login';
 
@@ -19,7 +19,7 @@ class App extends Component {
   componentDidMount() {
     const { dispatch, registered } = this.props;
     if (!registered) {
-      dispatch(register());
+      dispatch(registerGcm());
     } else {
       dispatch(syncMessages());
     }

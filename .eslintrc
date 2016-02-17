@@ -5,12 +5,14 @@
   },
   "globals": {
     "chrome": false,
-    "componentHandler": false
+    "componentHandler": false,
+    "sinon": false,
   },
   "rules": {
     "react/jsx-no-bind": [2, {
       "ignoreRefs": true
     }],
-    "prefer-template": 1
+    "prefer-template": 1,
+    "no-use-before-define": 0
   }
 }
