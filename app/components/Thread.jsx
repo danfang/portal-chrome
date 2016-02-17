@@ -39,8 +39,10 @@ export default class Thread extends Component {
         <li className={getListClassName(selected)}>
           <span className="mdl-list__item-primary-content">
             <i className="material-icons mdl-list__item-icon">person</i>
-            <span className="mdl-list__item-text">{ to }</span>
-            <span className="mdl-list__item-sub-title">{ messagePreview }</span>
+            <div>
+              <span className="mdl-list__item-text">{ to }</span>
+              <span className="mdl-list__item-sub-title">{ messagePreview }</span>
+            </div>
           </span>
           <span className="mdl-list__item-secondary-content">
             <span className="mdl-list__item-secondary-info">{ time }</span>

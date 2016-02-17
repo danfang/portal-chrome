@@ -55,26 +55,23 @@ export function registerDevice(registrationId, onregister = listenAndSync) {
         }, response.encryption_key, response.notification_key));
         dispatch(onregister());
       })
-      .catch(ex => {
-        console.log(ex);
-        dispatch(registrationError(ex));
-      });
+      .catch(ex => dispatch(registrationError(ex)));
   };
 }
 
 export function listenAndSync() {
   return dispatch => {
-    dispatch(listenGCM());
+    dispatch(listenGcm());
     dispatch(syncMessages());
   };
 }
 
-export function listenGCM(gcm = chrome.gcm) {
+export function listenGcm(gcm = chrome.gcm) {
   return dispatch => {
     dispatch(listeningMessages());
-    gcm.onMessage.addListener((message) => {
-      dispatch(messageReceived(message.data));
-    });
+    gcm.onMessage.addListener((message) =>
+      dispatch(messageReceived(message.data)
+    ));
   };
 }
 

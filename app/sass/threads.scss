@@ -24,6 +24,6 @@
     overflow-y: scroll;
     margin: 0;
     padding: 0;
-    height: 100%;
+    height: calc(100% - 125px);
   }
 }

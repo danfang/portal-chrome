@@ -13,12 +13,14 @@ const credentials = {
   userID: 'id',
 };
 
-describe('fetch devices', () => {
+const deviceEndpoint = `${API_ENDPOINT}/user/devices`;
+
+describe('action fetchDevices', () => {
   afterEach(() => {
     fetchMock.restore();
   });
 
-  it('dispatches the correct actions and makes an API call to GET devices', (done) => {
+  it('should dispatch the correct actions and make an API call to GET devices', (done) => {
     const returnedDevices = [{
       created_at: 12345,
       name: 'Nexus 6P',
@@ -26,7 +28,7 @@ describe('fetch devices', () => {
       updated_at: 12345,
     }];
 
-    fetchMock.mock(`${API_ENDPOINT}/user/devices`, 'GET', {
+    fetchMock.mock(deviceEndpoint, 'GET', {
       devices: returnedDevices,
     });
 
@@ -40,15 +42,12 @@ describe('fetch devices', () => {
   });
 });
 
-describe('register device with GCM', () => {
-  it('should unregister the device, register the device, then call onregister', (done) => {
+describe('action registerGcm', () => {
+  it('should re-register the device, then call its onregister method', (done) => {
     const registrationId = '12345';
 
-    const unregisterStub = sinon.stub()
-      .callsArg(0);
-
-    const registerStub = sinon.stub()
-      .callsArgWith(1, registrationId);
+    const unregisterStub = sinon.stub().callsArg(0);
+    const registerStub = sinon.stub().callsArgWith(1, registrationId);
 
     const mockGcm = {
       register: registerStub,
@@ -80,26 +79,24 @@ describe('register device with GCM', () => {
   });
 });
 
-describe('register device with Portal API', () => {
-  const endpoint = `${API_ENDPOINT}/user/devices`;
-
+describe('action registerDevice', () => {
   afterEach(() => {
     fetchMock.restore();
   });
 
   it('should dispatch an error on missing credentials', (done) => {
-    fetchMock.mock(endpoint, 'POST', should.fail);
+    fetchMock.mock(deviceEndpoint, 'POST', should.fail);
     const expectedActions = [{ type: types.REGISTRATION_ERROR, error: 'missing credentials' }];
     const store = mockStore({ loginStatus: {} }, expectedActions, done);
     store.dispatch(actions.registerDevice('registrationId'));
   });
 
-  it('should dispatch the correct actions and send a POST request', (done) => {
+  it('should dispatch the correct actions and make an API call to POST devices', (done) => {
     const deviceId = '35';
     const notificationKey = '123';
     const encryptionKey = '456';
 
-    fetchMock.mock(endpoint, 'POST', {
+    fetchMock.mock(deviceEndpoint, 'POST', {
       device_id: deviceId,
       notification_key: notificationKey,
       encryption_key: encryptionKey,
@@ -123,9 +120,9 @@ describe('register device with Portal API', () => {
     ];
 
     const onRegisterStub = sinon.stub().returns(() => {
-      fetchMock.called(endpoint).should.be.true;
+      fetchMock.called(deviceEndpoint).should.be.true;
 
-      const options = fetchMock.lastOptions(endpoint);
+      const options = fetchMock.lastOptions(deviceEndpoint);
 
       // Check headers
       options.headers['X-USER-ID'].should.equal(credentials.userID);
@@ -142,5 +139,39 @@ describe('register device with Portal API', () => {
     const store = mockStore({ loginStatus: { credentials } }, expectedActions);
 
     store.dispatch(actions.registerDevice(registrationId, onRegisterStub));
+  });
+});
+
+describe('action listenGcm', () => {
+  it('should dispatch the correct actions and add a message listener', (done) => {
+    const message = {
+      to: 'notification_key',
+      priority: 'high',
+      data: {
+        type: 'message',
+        payload: JSON.stringify({
+          mid: 'mid',
+          to: 'to',
+          at: 130023451,
+          body: 'body',
+        }),
+      },
+    };
+
+    // GCM message listener that immediately invokes a message callback
+    const mockGcm = {
+      onMessage: {
+        addListener: sinon.stub().yields([message]),
+      },
+    };
+
+    const expectedActions = [
+      { type: types.LISTENING_MESSAGES },
+      { type: types.MESSAGE_RECEIVED, data: message.data },
+    ];
+
+    const store = mockStore({}, expectedActions, () => done());
+
+    store.dispatch(actions.listenGcm(mockGcm));
   });
 });
