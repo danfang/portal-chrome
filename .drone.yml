@@ -7,11 +7,21 @@ build:
   commands:
     - npm -s i
     - npm test
+    - mkdir build/
+    - npm run build
+    - tar cvzf build-$${COMMIT:0:8}.tar.gz build/
+
+publish:
+  gcs:
+    when:
+      branch: master
+    auth_key: >
+      $$SERVICE_ACCOUNT_KEY
+    source: build-$${COMMIT:0:8}.tar.gz
+    target: portal-chrome-artifacts/
 
 notify:
   slack:
     webhook_url: https://hooks.slack.com/services/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
     channel: build
     username: drone
-
-
