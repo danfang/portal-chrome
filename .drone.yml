@@ -18,7 +18,7 @@ publish:
     auth_key: >
       $$SERVICE_ACCOUNT_KEY
     source: build-$${COMMIT:0:8}.tar.gz
-    target: portal-chrome-artifacts/
+    target: portal-chrome-artifacts/build-$${COMMIT:0:8}.tar.gz
 
 notify:
   slack:
