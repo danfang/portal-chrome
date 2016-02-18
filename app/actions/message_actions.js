@@ -9,16 +9,42 @@ const syncMessagesEndpoint = `${API_ENDPOINT}/user/messages/sync`;
 const messageHistoryEndpoint = `${API_ENDPOINT}/user/messages/history`;
 const gcmUpstream = `${SENDER_ID}@gcm.googleapis.com`;
 
+export function listenAndSync() {
+  return dispatch => {
+    dispatch(listenGcm());
+    dispatch(syncMessages());
+  };
+}
+
+export function listenGcm(gcm = chrome.gcm) {
+  return dispatch => {
+    dispatch(listeningMessages());
+    gcm.onMessage.addListener(message => {
+      const data = message.data;
+      const payload = JSON.parse(data.payload);
+      switch (data.type) {
+        case 'message':
+          dispatch(messageReceived(payload));
+          break;
+        case 'status':
+          dispatch(statusReceived(payload));
+          break;
+        default: break;
+      }
+    });
+  };
+}
+
 export function syncMessages() {
   return (dispatch, getState) => {
     const state = getState();
-    const lastMessageID = state.messages.lastMessageID;
+    const lastMessage = state.messages.lastMessage;
     const credentials = state.login.credentials;
     const encryptionKey = state.devices.encryptionKey;
 
     // If we have a latest message, sync messages
-    if (lastMessageID) {
-      return fetch(`${syncMessagesEndpoint}/${lastMessageID}`,
+    if (lastMessage) {
+      return fetch(`${syncMessagesEndpoint}/${lastMessage.mid}`,
         authenticatedRequest(credentials, 'GET'))
         .then(checkResponse)
         .then(response => dispatch(newMessages(response.messages, encryptionKey)));
@@ -30,7 +56,7 @@ export function syncMessages() {
   };
 }
 
-export function sendMessage(input) {
+export function sendMessage(input, gcm = chrome.gcm) {
   return (dispatch, getState) => {
     const { notificationKey, encryptionKey } = getState().devices;
     const message = makeMessage(input.to, input.body);
@@ -43,9 +69,9 @@ export function sendMessage(input) {
     dispatch(sendingMessage(message));
 
     // Send to other devices via GCM
-    chrome.gcm.send(gcmMessage(notificationKey, data), () => {
+    gcm.send(gcmMessage(notificationKey, data), () => {
       // Send to GCM server upstream
-      chrome.gcm.send(gcmMessage(gcmUpstream, data), () => {
+      gcm.send(gcmMessage(gcmUpstream, data), () => {
         dispatch(sentMessage(message.mid));
       });
     });
@@ -76,6 +102,18 @@ function gcmMessage(to, data) {
     destinationId: to,
     data,
   };
+}
+
+function listeningMessages() {
+  return { type: types.LISTENING_MESSAGES };
+}
+
+function messageReceived(message) {
+  return { type: types.MESSAGE_RECEIVED, message };
+}
+
+function statusReceived(status) {
+  return { type: types.STATUS_RECEIVED, status };
 }
 
 function sendingMessage(message) {

@@ -1,28 +1,66 @@
-import { API_ENDPOINT } from '../constants';
+import {
+  API_ENDPOINT,
+  GOOGLE_OAUTH_SCOPES,
+  GOOGLE_OAUTH_CLIENT_ID,
+  GOOGLE_OAUTH_REDIRECT,
+} from '../constants';
+
 import { authenticatedRequest, checkResponse } from '../util/request';
 import * as types from './types';
 
-// Login endpoint
 const loginEndpoint = `${API_ENDPOINT}/login/google`;
-
-// Signout endpoint
 const signoutEndpoint = `${API_ENDPOINT}/user/signout`;
 
-// Manifest constants
+const clientId = encodeURIComponent(GOOGLE_OAUTH_CLIENT_ID);
+const scopes = encodeURIComponent(GOOGLE_OAUTH_SCOPES.join(' '));
+const redirectUri = encodeURIComponent(GOOGLE_OAUTH_REDIRECT);
 
-function getOAuthUrl(chrome = chrome) {
-  const manifest = chrome.runtime.getManifest();
-  const clientId = encodeURIComponent(manifest.oauth2.client_id);
-  const scopes = encodeURIComponent(manifest.oauth2.scopes.join(' '));
-  const redirectUri = encodeURIComponent(`https://${chrome.runtime.id}.chromiumapp.org`);
+const url = 'https://accounts.google.com/o/oauth2/auth' +
+       '?client_id=' + clientId +
+       '&prompt=select_account' +
+       '&response_type=id_token' +
+       '&access_type=offline' +
+       '&redirect_uri=' + redirectUri +
+       '&scope=' + scopes;
 
-  return 'https://accounts.google.com/o/oauth2/auth' +
-         '?client_id=' + clientId +
-         '&prompt=select_account' +
-         '&response_type=id_token' +
-         '&access_type=offline' +
-         '&redirect_uri=' + redirectUri +
-         '&scope=' + scopes;
+export function googleSignIn(chrome = chrome, onsignin = authenticateUser) {
+  return dispatch => {
+    dispatch(initiateGoogleLogin());
+    chrome.identity.launchWebAuthFlow({ url, interactive: true }, redirect => {
+      if (chrome.runtime.lastError) return dispatch(googleLoginError());
+
+      const idToken = redirect.split('#', 2)[1].split('=')[1];
+      dispatch(onsignin(idToken));
+    });
+  };
+}
+
+export function authenticateUser(idToken) {
+  return dispatch =>
+    fetch(loginEndpoint, {
+      method: 'post',
+      body: JSON.stringify({ id_token: idToken }),
+    })
+    .then(checkResponse)
+    .then(response => dispatch(successfulLogin({
+      userToken: response.user_token,
+      userID: response.user_id,
+    })));
+}
+
+export function signOut() {
+  return (dispatch, getState) => {
+    const state = getState();
+    const { device } = state.devices;
+    const { credentials } = state.login;
+
+    dispatch(signedOut());
+
+    fetch(signoutEndpoint, authenticatedRequest(credentials, 'POST', {
+      device_id: device ? device.device_id : '0',
+    }))
+    .then(checkResponse);
+  };
 }
 
 function initiateGoogleLogin() {
@@ -39,48 +77,4 @@ function successfulLogin(credentials) {
 
 function signedOut() {
   return { type: types.SIGNED_OUT };
-}
-
-export function signOut() {
-  return (dispatch, getState) => {
-    const state = getState();
-    const { device } = state.devices;
-    const { credentials } = state.login;
-
-    dispatch(signedOut());
-
-    // Initiate a signout API request
-    fetch(signoutEndpoint, authenticatedRequest(credentials, 'POST', {
-      device_id: device ? device.device_id : '0',
-    }))
-    .then(checkResponse);
-  };
-}
-
-function authenticateUser(idToken) {
-  return dispatch =>
-    fetch(loginEndpoint, {
-      method: 'post',
-      body: JSON.stringify({ id_token: idToken }),
-    })
-    .then(checkResponse)
-    .then(response => dispatch(successfulLogin({
-      userToken: response.user_token,
-      userID: response.user_id,
-    })));
-}
-
-export function googleSignIn(chrome = chrome) {
-  return dispatch => {
-    dispatch(initiateGoogleLogin());
-    const url = getOAuthUrl();
-    chrome.identity.launchWebAuthFlow({ url, interactive: true }, redirect => {
-      if (chrome.runtime.lastError) {
-        dispatch(googleLoginError());
-        return;
-      }
-      const idToken = redirect.split('#', 2)[1].split('=')[1];
-      dispatch(authenticateUser(idToken));
-    });
-  };
 }

@@ -6,6 +6,8 @@ import { API_ENDPOINT, SENDER_ID } from '../../app/constants';
 import * as actions from '../../app/actions/device_actions';
 import * as types from '../../app/actions/types';
 
+import { expectFetchMock } from '../functions';
+
 const mockStore = configureMockStore([thunk]);
 
 const credentials = {
@@ -21,23 +23,27 @@ describe('action fetchDevices', () => {
   });
 
   it('should dispatch the correct actions and make an API call to GET devices', (done) => {
-    const returnedDevices = [{
+    const devices = [{
       created_at: 12345,
       name: 'Nexus 6P',
       type: 'phone',
       updated_at: 12345,
     }];
 
-    fetchMock.mock(deviceEndpoint, 'GET', {
-      devices: returnedDevices,
-    });
+    fetchMock.mock(deviceEndpoint, 'GET', { devices });
 
     const expectedActions = [
       { type: types.FETCHING_DEVICES },
-      { type: types.FETCHED_DEVICES, devices: returnedDevices },
+      { type: types.FETCHED_DEVICES, devices },
     ];
 
-    const store = mockStore({ login: { credentials } }, expectedActions, done);
+    const expectedCalls = (ex) => {
+      expectFetchMock(fetchMock, deviceEndpoint, credentials);
+      fetchMock.calls().unmatched.length.should.equal(0);
+      done(ex);
+    };
+
+    const store = mockStore({ login: { credentials } }, expectedActions, expectedCalls);
     store.dispatch(actions.fetchDevices());
   });
 });
@@ -61,19 +67,17 @@ describe('action registerGcm', () => {
 
     const onRegisterStub = sinon.stub();
 
-    const onFinish = () => {
+    const expectedCalls = () => {
       unregisterStub.calledOnce.should.be.true;
 
       registerStub.calledOnce.should.be.true;
       registerStub.calledWith([SENDER_ID]);
 
       onRegisterStub.calledOnce.should.be.true;
-      onRegisterStub.calledWith(registrationId);
       done();
     };
 
-    onRegisterStub.withArgs(registrationId).returns(onFinish);
-
+    onRegisterStub.withArgs(registrationId).returns(expectedCalls);
     const store = mockStore({ login: { credentials } }, expectedActions);
     store.dispatch(actions.registerGcm(mockGcm, onRegisterStub));
   });
@@ -106,7 +110,7 @@ describe('action registerDevice', () => {
 
     const newDevice = {
       registration_id: registrationId,
-      name: 'Chrome OSX',
+      name: 'Chrome Application',
       type: 'chrome',
     };
 
@@ -119,59 +123,14 @@ describe('action registerDevice', () => {
       },
     ];
 
-    const onRegisterStub = sinon.stub().returns(() => {
-      fetchMock.called(deviceEndpoint).should.be.true;
-
-      const options = fetchMock.lastOptions(deviceEndpoint);
-
-      // Check headers
-      options.headers['X-USER-ID'].should.equal(credentials.userID);
-      options.headers['X-USER-TOKEN'].should.equal(credentials.userToken);
-
-      // Check body
-      JSON.parse(options.body).should.deep.equal(newDevice);
-
-      // Check unmatched calls
+    const expectedCalls = () => {
+      expectFetchMock(fetchMock, deviceEndpoint, credentials, newDevice);
       fetchMock.calls().unmatched.length.should.equal(0);
       done();
-    });
+    };
 
+    const onRegisterStub = sinon.stub().returns(expectedCalls);
     const store = mockStore({ login: { credentials } }, expectedActions);
-
     store.dispatch(actions.registerDevice(registrationId, onRegisterStub));
-  });
-});
-
-describe('action listenGcm', () => {
-  it('should dispatch the correct actions and add a message listener', (done) => {
-    const message = {
-      to: 'notification_key',
-      priority: 'high',
-      data: {
-        type: 'message',
-        payload: JSON.stringify({
-          mid: 'mid',
-          to: 'to',
-          at: 130023451,
-          body: 'body',
-        }),
-      },
-    };
-
-    // GCM message listener that immediately invokes a message callback
-    const mockGcm = {
-      onMessage: {
-        addListener: sinon.stub().yields([message]),
-      },
-    };
-
-    const expectedActions = [
-      { type: types.LISTENING_MESSAGES },
-      { type: types.MESSAGE_RECEIVED, data: message.data },
-    ];
-
-    const store = mockStore({}, expectedActions, () => done());
-
-    store.dispatch(actions.listenGcm(mockGcm));
   });
 });

@@ -5,7 +5,7 @@ import * as types from '../actions/types';
 const initialState = {
   threads: [],
   currentThreadIndex: NEW_MESSAGE_INDEX,
-  lastMessageID: null,
+  lastMessage: null,
 };
 
 export default (state = initialState, action) => {
@@ -25,6 +25,9 @@ export default (state = initialState, action) => {
     case types.MESSAGE_RECEIVED:
       return receiveMessages(state, [action.message], action.encryptionKey);
 
+    case types.STATUS_RECEIVED:
+      return updateStatus(state, action.status);
+
     case types.MESSAGES_RECEIVED:
       return receiveMessages(state, action.messages, action.encryptionKey);
 
@@ -35,15 +38,14 @@ export default (state = initialState, action) => {
   }
 };
 
-function receiveMessages(state, messages, encryptionKey) {
+export function receiveMessages(state, messages, encryptionKey) {
   if (messages.length === 0) {
     return state;
   }
   // Make a mutable copy of the old thread state
-  const newThreads = JSON.parse(JSON.stringify(state.threads));
+  const threads = JSON.parse(JSON.stringify(state.threads));
 
-  let lastMessageTime = 0;
-  let lastMessageID;
+  let lastMessage = state.lastMessage || { at: 0 };
 
   messages.forEach((m) => {
     const message = m;
@@ -55,22 +57,21 @@ function receiveMessages(state, messages, encryptionKey) {
     }
 
     // Insert the message into the correct thread
-    insertMessageIntoThreads(newThreads, message);
+    insertMessageIntoThreads(threads, message);
 
     // Update properties based on the latest message
-    if (message.at > lastMessageTime) {
-      lastMessageTime = message.at;
-      lastMessageID = message.mid;
+    if (message.at > lastMessage.at) {
+      lastMessage = message;
     }
   });
 
   // Threads sorted with newest messages first
-  sortThreads(newThreads);
+  sortThreads(threads);
 
   return {
-    threads: newThreads,
     currentThreadIndex: 0,
-    lastMessageID,
+    threads,
+    lastMessage,
   };
 }
 
@@ -119,4 +120,38 @@ export function sortThreads(threads) {
     const msgB = b.messages;
     return msgA[msgA.length - 1].at > msgB[msgB.length - 1].at ? -1 : 1;
   });
+}
+
+export function updateStatus(state, status) {
+  let lastMessage = state.lastMessage || { at: 0 };
+
+  const threads = JSON.parse(JSON.stringify(state.threads));
+
+  const index = threads.findIndex(thread => {
+    let found = false;
+    const messages = thread.messages;
+    for (let i = messages.length - 1; !found && i >= 0; i--) {
+      const message = messages[i];
+      if (message.mid === status.mid) {
+        message.status = status.status;
+        message.at = status.at;
+        found = true;
+        if (message.at > lastMessage.at) {
+          lastMessage = message;
+        }
+      }
+    }
+    return found;
+  });
+
+  if (index === -1) return state;
+
+  // Move the thread at index to the front of threads
+  threads.unshift(...threads.splice(index, 1));
+
+  return {
+    currentThreadIndex: 0,
+    threads,
+    lastMessage,
+  };
 }

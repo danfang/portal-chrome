@@ -1,6 +1,6 @@
 import { SENDER_ID, API_ENDPOINT } from '../constants';
 import { authenticatedRequest, checkResponse } from '../util/request';
-import { syncMessages } from './message_actions';
+import { listenAndSync } from './message_actions';
 import * as types from './types';
 
 const devicesEndpoint = `${API_ENDPOINT}/user/devices`;
@@ -42,36 +42,19 @@ export function registerDevice(registrationId, onregister = listenAndSync) {
       return;
     }
     const newDevice = {
-      name: 'Chrome OSX',
+      name: 'Chrome Application',
       registration_id: registrationId,
       type: 'chrome',
     };
     fetch(devicesEndpoint, authenticatedRequest(credentials, 'POST', newDevice))
       .then(checkResponse)
       .then(response => {
-        dispatch(registeredDevice({
-          ...newDevice,
-          device_id: response.device_id,
-        }, response.encryption_key, response.notification_key));
+        const { device_id, encryption_key, notification_key } = response;
+        const deviceWithId = { ...newDevice, device_id };
+        dispatch(registeredDevice(deviceWithId, encryption_key, notification_key));
         dispatch(onregister());
       })
       .catch(ex => dispatch(registrationError(ex)));
-  };
-}
-
-export function listenAndSync() {
-  return dispatch => {
-    dispatch(listenGcm());
-    dispatch(syncMessages());
-  };
-}
-
-export function listenGcm(gcm = chrome.gcm) {
-  return dispatch => {
-    dispatch(listeningMessages());
-    gcm.onMessage.addListener((message) =>
-      dispatch(messageReceived(message.data)
-    ));
   };
 }
 
@@ -97,12 +80,4 @@ function fetchingDevices() {
 
 function fetchedDevices(devices) {
   return { type: types.FETCHED_DEVICES, devices };
-}
-
-function listeningMessages() {
-  return { type: types.LISTENING_MESSAGES };
-}
-
-function messageReceived(data) {
-  return { type: types.MESSAGE_RECEIVED, data };
 }

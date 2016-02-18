@@ -1,5 +1,5 @@
-require('es6-promise').polyfill();
 require('isomorphic-fetch');
+require('babel-polyfill');
 
 var context = require.context('./test', true, /\.spec\.jsx?$/);
 context.keys().forEach(context);
