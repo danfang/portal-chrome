@@ -23,12 +23,12 @@ const url = 'https://accounts.google.com/o/oauth2/auth' +
        '&redirect_uri=' + redirectUri +
        '&scope=' + scopes;
 
-export function googleSignIn(chrome = chrome, onsignin = authenticateUser) {
+export function googleSignIn(identity = chrome.identity, runtime = chrome.runtime,
+  onsignin = authenticateUser) {
   return dispatch => {
     dispatch(initiateGoogleLogin());
-    chrome.identity.launchWebAuthFlow({ url, interactive: true }, redirect => {
-      if (chrome.runtime.lastError) return dispatch(googleLoginError());
-
+    identity.launchWebAuthFlow({ url, interactive: true }, redirect => {
+      if (runtime.lastError) return dispatch(googleLoginError());
       const idToken = redirect.split('#', 2)[1].split('=')[1];
       dispatch(onsignin(idToken));
     });

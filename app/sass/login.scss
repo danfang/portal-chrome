@@ -1,11 +1,20 @@
 #login {
+  bottom: 0;
+  height: 410px;
+  left: 0;
+  letter-spacing: 2px;
+  margin: auto;
+  position: absolute;
+  right: 0;
   text-align: center;
-  margin-top: 200px;
+  top: 0;
+
   h1 {
     font-size: 5em;
     font-weight: 300;
     margin: 50px;
   }
+
   .btn-sign-in {
     cursor: pointer;
     background-image: url('../assets/btn_google_signin_light_normal_web@2x.png');
