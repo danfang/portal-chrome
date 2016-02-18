@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import App from './App';
 import Login from './Login';
 
-class Root extends Component {
+export class Root extends Component {
   render() {
     return this.props.loggedIn ? <App /> : <Login />;
   }

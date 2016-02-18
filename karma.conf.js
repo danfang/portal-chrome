@@ -24,9 +24,12 @@ module.exports = function (config) {
     singleRun: true,
     webpack: {
       devtool: 'inline-source-map',
+      resolve: {
+        extensions: ['', '.js', '.jsx']
+      },
       module: {
         loaders: [
-          { test: /\.js$/, loader: 'babel-loader' }
+          { test: /\.jsx?$/, loader: 'babel-loader' }
         ],
       }
     },

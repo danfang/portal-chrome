@@ -11,7 +11,7 @@ function getStatusIcon(inProgress, error) {
   return error ? <i className="material-icons md-48">error_outline</i> : '';
 }
 
-class Login extends Component {
+export class Login extends Component {
   constructor() {
     super();
     this.signIn = this.signIn.bind(this);

@@ -9,18 +9,21 @@ const loginEndpoint = `${API_ENDPOINT}/login/google`;
 const signoutEndpoint = `${API_ENDPOINT}/user/signout`;
 
 // Manifest constants
-const manifest = chrome.runtime.getManifest();
-const clientId = encodeURIComponent(manifest.oauth2.client_id);
-const scopes = encodeURIComponent(manifest.oauth2.scopes.join(' '));
-const redirectUri = encodeURIComponent(`https://${chrome.runtime.id}.chromiumapp.org`);
 
-const url = 'https://accounts.google.com/o/oauth2/auth' +
-            '?client_id=' + clientId +
-            '&prompt=select_account' +
-            '&response_type=id_token' +
-            '&access_type=offline' +
-            '&redirect_uri=' + redirectUri +
-            '&scope=' + scopes;
+function getOAuthUrl(chrome = chrome) {
+  const manifest = chrome.runtime.getManifest();
+  const clientId = encodeURIComponent(manifest.oauth2.client_id);
+  const scopes = encodeURIComponent(manifest.oauth2.scopes.join(' '));
+  const redirectUri = encodeURIComponent(`https://${chrome.runtime.id}.chromiumapp.org`);
+
+  return 'https://accounts.google.com/o/oauth2/auth' +
+         '?client_id=' + clientId +
+         '&prompt=select_account' +
+         '&response_type=id_token' +
+         '&access_type=offline' +
+         '&redirect_uri=' + redirectUri +
+         '&scope=' + scopes;
+}
 
 function initiateGoogleLogin() {
   return { type: types.GOOGLE_LOGIN };
@@ -67,18 +70,17 @@ function authenticateUser(idToken) {
     })));
 }
 
-export function googleSignIn() {
+export function googleSignIn(chrome = chrome) {
   return dispatch => {
     dispatch(initiateGoogleLogin());
+    const url = getOAuthUrl();
     chrome.identity.launchWebAuthFlow({ url, interactive: true }, redirect => {
       if (chrome.runtime.lastError) {
         dispatch(googleLoginError());
-        Promise.resolve();
         return;
       }
       const idToken = redirect.split('#', 2)[1].split('=')[1];
       dispatch(authenticateUser(idToken));
-      Promise.resolve();
     });
   };
 }
