@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Portal client for Chrome",
   "scripts": {
-    "build": "webpack --optimize-minimize >/dev/null; cp app/index.html app/main.js app/manifest.json build/",
+    "build": "webpack --optimize-minimize; cp app/index.html app/main.js app/manifest.json build/",
     "test": "eslint -c .eslintrc.test test/** && karma start"
   },
   "repository": {
