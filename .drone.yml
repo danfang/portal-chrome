@@ -22,6 +22,14 @@ publish:
 
 notify:
   slack:
+    when:
+      branch: master
     webhook_url: https://hooks.slack.com/services/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
     channel: build
     username: drone
+    template: |
+      {{ build.status }} {{ build.link_url }} ({{ build.branch }}) by {{ build.author }}.
+      {{#success build.status}}
+        Latest extension published to
+        https://console.cloud.google.com/m/cloudstorage/b/portal-chrome-artifacts/o/build-{{ truncate build.commit 8 }}.tar.gz
+      {{/success}}
