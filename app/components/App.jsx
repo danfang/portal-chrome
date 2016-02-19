@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import { registerGcm, fetchDevices } from '../actions/device_actions';
-import { syncMessages } from '../actions/message_actions';
+import { syncMessages, listenGcm } from '../actions/message_actions';
 import { signOut } from '../actions/login_actions';
 
 import Messages from './Messages';
@@ -20,10 +20,10 @@ export class App extends Component {
     const { dispatch, registered } = this.props;
     if (!registered) {
       dispatch(registerGcm());
-    } else {
-      dispatch(syncMessages());
     }
+    dispatch(syncMessages());
     dispatch(fetchDevices());
+    dispatch(listenGcm());
     componentHandler.upgradeAllRegistered();
   }
   flushData() {

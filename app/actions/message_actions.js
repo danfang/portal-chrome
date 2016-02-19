@@ -9,13 +9,6 @@ const syncMessagesEndpoint = `${API_ENDPOINT}/user/messages/sync`;
 const messageHistoryEndpoint = `${API_ENDPOINT}/user/messages/history`;
 const gcmUpstream = `${SENDER_ID}@gcm.googleapis.com`;
 
-export function listenAndSync() {
-  return dispatch => {
-    dispatch(listenGcm());
-    dispatch(syncMessages());
-  };
-}
-
 export function listenGcm(gcm = chrome.gcm) {
   return dispatch => {
     dispatch(listeningMessages());

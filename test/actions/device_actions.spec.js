@@ -123,14 +123,12 @@ describe('action registerDevice', () => {
       },
     ];
 
-    const expectedCalls = () => {
+    const store = mockStore({ login: { credentials } }, expectedActions, (ex) => {
       expectFetchMock(fetchMock, deviceEndpoint, credentials, newDevice);
       fetchMock.calls().unmatched.length.should.equal(0);
-      done();
-    };
+      done(ex);
+    });
 
-    const onRegisterStub = sinon.stub().returns(expectedCalls);
-    const store = mockStore({ login: { credentials } }, expectedActions);
-    store.dispatch(actions.registerDevice(registrationId, onRegisterStub));
+    store.dispatch(actions.registerDevice(registrationId));
   });
 });
