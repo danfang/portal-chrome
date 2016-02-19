@@ -28,7 +28,7 @@ notify:
     channel: build
     username: drone
     template: |
-      <strong>{{ build.status }}</strong> <a href="{{ system.link_url }}/{{ repo.full_name }}/{{ build.number }}">{{ repo.full_name }}#{{ build.number }}</a> ({{ build.branch }}) by {{ build.author }}.
+      *{{ build.status }}* <{{ system.link_url }}/{{ repo.full_name }}/{{ build.number }}|{{ repo.full_name }}#{{ build.number }}> ({{ build.branch }}) by {{ build.author }}.
       {{#success build.status}}
-        Latest extension published to https://console.cloud.google.com/m/cloudstorage/b/portal-chrome-artifacts/o/build-{{ truncate build.commit 8 }}.tar.gz
+        Latest extension published to <https://console.cloud.google.com/m/cloudstorage/b/portal-chrome-artifacts/o/build-{{ truncate build.commit 8 }}.tar.gz|Google Cloud Storage>
       {{/success}}
