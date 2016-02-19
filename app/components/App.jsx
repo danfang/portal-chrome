@@ -20,8 +20,9 @@ export class App extends Component {
     const { dispatch, registered } = this.props;
     if (!registered) {
       dispatch(registerGcm());
+    } else {
+      dispatch(syncMessages());
     }
-    dispatch(syncMessages());
     dispatch(fetchDevices());
     dispatch(listenGcm());
     componentHandler.upgradeAllRegistered();
@@ -60,7 +61,7 @@ App.propTypes = {
   dispatch: PropTypes.func.isRequired,
 };
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
   const { devices } = state;
   return {
     registered: devices.registered,
@@ -68,6 +69,6 @@ function mapStateToProps(state) {
     fetchingDevices: devices.fetchingDevices,
     linkedDevices: devices.linkedDevices,
   };
-}
+};
 
 export default connect(mapStateToProps)(App);

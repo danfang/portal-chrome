@@ -1,5 +1,6 @@
-import { SENDER_ID, API_ENDPOINT } from '../constants';
 import { authenticatedRequest, checkResponse } from '../util/request';
+import { SENDER_ID, API_ENDPOINT } from '../constants';
+import { syncMessages } from './message_actions';
 import * as types from './types';
 
 const devicesEndpoint = `${API_ENDPOINT}/user/devices`;
@@ -33,7 +34,7 @@ export function registerGcm(gcm = chrome.gcm, onregister = registerDevice) {
   };
 }
 
-export function registerDevice(registrationId) {
+export function registerDevice(registrationId, onregister = syncMessages) {
   return (dispatch, getState) => {
     const credentials = getState().login.credentials;
     if (!credentials) {
@@ -55,6 +56,7 @@ export function registerDevice(registrationId) {
           encryption_key,
           notification_key
         ));
+        dispatch(onregister());
       })
       .catch(ex => dispatch(registrationError(ex)));
   };

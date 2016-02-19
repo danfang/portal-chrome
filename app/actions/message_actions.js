@@ -31,8 +31,8 @@ export function listenGcm(gcm = chrome.gcm) {
 export function messageReceived(message) {
   return (dispatch, getState) => {
     const { encryptionKey } = getState().devices;
-    dispatch({ type: types.MESSAGE_RECEIVED, message, encryptionKey })
-  }
+    dispatch({ type: types.MESSAGE_RECEIVED, message, encryptionKey });
+  };
 }
 
 export function syncMessages() {
