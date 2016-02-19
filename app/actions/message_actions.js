@@ -28,6 +28,13 @@ export function listenGcm(gcm = chrome.gcm) {
   };
 }
 
+export function messageReceived(message) {
+  return (dispatch, getState) => {
+    const { encryptionKey } = getState().devices;
+    dispatch({ type: types.MESSAGE_RECEIVED, message, encryptionKey })
+  }
+}
+
 export function syncMessages() {
   return (dispatch, getState) => {
     const state = getState();
@@ -99,10 +106,6 @@ function gcmMessage(to, data) {
 
 function listeningMessages() {
   return { type: types.LISTENING_MESSAGES };
-}
-
-function messageReceived(message) {
-  return { type: types.MESSAGE_RECEIVED, message };
 }
 
 function statusReceived(status) {

@@ -48,15 +48,16 @@ describe('action listenGcm', () => {
       status: 'started',
     };
 
+    const encryptionKey = 'key';
     const gcmMessage = makeGcmMessage('message', message);
     const gcm = mockGcm(gcmMessage);
 
     const expectedActions = [
       { type: types.LISTENING_MESSAGES },
-      { type: types.MESSAGE_RECEIVED, message },
+      { type: types.MESSAGE_RECEIVED, message, encryptionKey },
     ];
 
-    const store = mockStore({}, expectedActions, done);
+    const store = mockStore({ devices: { encryptionKey } }, expectedActions, done);
     store.dispatch(actions.listenGcm(gcm));
   });
 
