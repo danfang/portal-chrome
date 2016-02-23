@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 
 import LinkedDevice from './LinkedDevice';
 
-export default class DeviceList extends Component {
+class DeviceList extends Component {
   render() {
     const { linkedDevices } = this.props;
     const deviceElements = linkedDevices.map(device =>
@@ -28,3 +28,5 @@ export default class DeviceList extends Component {
 DeviceList.propTypes = {
   linkedDevices: PropTypes.array.isRequired,
 };
+
+export default DeviceList;

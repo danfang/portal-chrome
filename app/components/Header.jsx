@@ -49,7 +49,7 @@ class Header extends Component {
             </div>
             { statusIcon }
           </a>
-          <NativeListener onClick={this.props.flushData}>
+          <NativeListener onClick={this.props.clearMessagesOnClick}>
             <a id="clear-messages" className="mdl-navigation__link" href="#">
               <div className="mdl-tooltip mdl-tooltip--large" htmlFor="clear-messages">
                 Clear all messages
@@ -66,11 +66,11 @@ class Header extends Component {
 }
 
 Header.propTypes = {
-  flushData: PropTypes.func,
   linkedDevices: PropTypes.array.isRequired,
   isLinkedToPhone: PropTypes.bool.isRequired,
   registered: PropTypes.bool.isRequired,
   registerInProgress: PropTypes.bool.isRequired,
+  clearMessagesOnClick: PropTypes.func.isRequired,
 };
 
 export default Header;

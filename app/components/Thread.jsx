@@ -11,14 +11,11 @@ function getListClassName(selected) {
   return `thread mdl-list__item mdl-list__item--two-line ${selectedClass}`;
 }
 
-export default class Thread extends Component {
-  constructor() {
-    super();
-    this.onClick = this.onClick.bind(this);
-  }
-  onClick() {
-    const { index, threadOnClicked } = this.props;
-    threadOnClicked(index);
+class Thread extends Component {
+  constructor(props) {
+    super(props);
+    const { index, threadOnClicked } = props;
+    this.onClick = () => threadOnClicked(index);
   }
   render() {
     const { index, selected, thread } = this.props;
@@ -64,3 +61,5 @@ Thread.propTypes = {
     messageInput: PropTypes.string,
   }),
 };
+
+export default Thread;

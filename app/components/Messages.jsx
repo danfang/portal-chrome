@@ -5,23 +5,23 @@ import { connect } from 'react-redux';
 import { DEBUG_MODE, NEW_MESSAGE_INDEX } from '../constants';
 import { sendMessage } from '../actions/message_actions';
 
-import Message from './Message';
+import MessageHistory from './MessageHistory';
+import Snackbar from './Snackbar';
 
 const messageInputDisabledText = 'Unable to send messages. Please link a valid phone.';
+const messageInputText = 'Your message here...';
 const messageToText = 'Enter a name or phone number...';
 
 class Messages extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.onKeyUp = this.onKeyUp.bind(this);
   }
   componentDidMount() {
     componentHandler.upgradeAllRegistered();
-    this.scrollToBottom();
   }
   componentDidUpdate() {
     componentHandler.upgradeAllRegistered();
-    this.scrollToBottom();
   }
   onKeyUp(e) {
     if (e.code === 'Enter') {
@@ -36,25 +36,15 @@ class Messages extends Component {
       } else {
         dispatch(sendMessage({ to, body: this._messageInput.value }));
         this._messageInput.value = '';
-        this.scrollToBottom();
       }
     }
   }
   alert(message) {
     this._alerts.MaterialSnackbar.showSnackbar({ message, timeout: 2000 });
   }
-  scrollToBottom() {
-    this._messageHistory.scrollTop = this._messageHistory.scrollHeight;
-  }
   render() {
-    const { newMessage, isDisabled } = this.props;
-
-    const alert = (
-      <div ref={r => this._alerts = r} className="mdl-js-snackbar mdl-snackbar">
-        <div className="mdl-snackbar__text"></div>
-        <button className="mdl-snackbar__action" type="button"></button>
-      </div>
-    );
+    const { newMessage, isDisabled, currentThread } = this.props;
+    const messages = newMessage ? [] : currentThread.messages;
 
     const messageToInput = newMessage ? (
       <div id="message-to-container" className="mdl-textfield mdl-js-textfield">
@@ -68,10 +58,6 @@ class Messages extends Component {
       </div>
     ) : '';
 
-    const messageHistory = newMessage ? '' : this.props.currentThread.messages.map((message) =>
-      <Message key={message.mid} message={message} />
-    );
-
     const messageBodyInput = (
       <div id="message-input-container" className="mdl-textfield mdl-js-textfield">
         <NativeListener onKeyUp={this.onKeyUp}>
@@ -81,20 +67,17 @@ class Messages extends Component {
           />
         </NativeListener>
         <label className="mdl-textfield__label" htmlFor="message-input">
-          { isDisabled ? messageInputDisabledText : 'Your message here...' }
+          { isDisabled ? messageInputDisabledText : messageInputText }
         </label>
       </div>
     );
+
     return (
       <div id="messages">
-        <div id="messages-header">
-          <p>Messages</p>
-        </div>
-        { alert }
+        <div id="messages-header"><p>Messages</p></div>
+        <Snackbar ref={r => this._alerts = r} />
         { messageToInput }
-        <div ref={r => this._messageHistory = r} id="message-history">
-          { messageHistory }
-        </div>
+        <MessageHistory messages={messages}/>
         { messageBodyInput }
       </div>
     );

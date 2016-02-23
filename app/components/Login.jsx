@@ -12,19 +12,16 @@ function getStatusIcon(inProgress, error) {
 }
 
 export class Login extends Component {
-  constructor() {
-    super();
-    this.signIn = this.signIn.bind(this);
+  constructor(props) {
+    super(props);
+    const { dispatch } = this.props;
+    this.signIn = () => dispatch(googleSignIn());
   }
   componentDidMount() {
     componentHandler.upgradeAllRegistered();
   }
   componentDidUpdate() {
     componentHandler.upgradeAllRegistered();
-  }
-  signIn() {
-    const { dispatch } = this.props;
-    dispatch(googleSignIn());
   }
   render() {
     const { inProgress, error } = this.props;
@@ -50,9 +47,9 @@ Login.propTypes = {
   dispatch: PropTypes.func.isRequired,
 };
 
-function mapStateToProps(state) {
+const mapStateToProps = (state) => {
   const { inProgress, credentials, error } = state.login;
   return { inProgress, error, credentials };
-}
+};
 
 export default connect(mapStateToProps)(Login);

@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import { registerGcm, fetchDevices } from '../actions/device_actions';
-import { syncMessages, listenGcm } from '../actions/message_actions';
+import { syncMessages, listenGcm, clearMessages } from '../actions/message_actions';
 import { signOut } from '../actions/login_actions';
 
 import Messages from './Messages';
@@ -11,10 +11,11 @@ import Header from './Header';
 import Menu from './Menu';
 
 export class App extends Component {
-  constructor() {
-    super();
-    this.signOut = this.signOut.bind(this);
-    this.flushData = this.flushData.bind(this);
+  constructor(props) {
+    super(props);
+    const { dispatch } = this.props;
+    this.signOut = () => dispatch(signOut());
+    this.clearMessages = () => dispatch(clearMessages());
   }
   componentDidMount() {
     const { dispatch, registered } = this.props;
@@ -27,18 +28,10 @@ export class App extends Component {
     dispatch(listenGcm());
     componentHandler.upgradeAllRegistered();
   }
-  flushData() {
-    const { dispatch } = this.props;
-    dispatch({ type: 'FLUSH_DATA' });
-  }
-  signOut() {
-    const { dispatch } = this.props;
-    dispatch(signOut());
-  }
   render() {
     return (
       <div id="app" refs="app" className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-        <Header { ...this.props } flushData={this.flushData} />
+        <Header { ...this.props } clearMessagesOnClick={this.clearMessages} />
         <Menu { ...this.props } signOutOnClick={this.signOut} />
         <main className="mdl-layout__content">
           <div className="page-content">

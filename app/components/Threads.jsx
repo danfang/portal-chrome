@@ -1,18 +1,21 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import { NEW_MESSAGE_INDEX } from '../constants';
 import { selectThread } from '../actions/message_actions';
+import { NEW_MESSAGE_INDEX } from '../constants';
+
 import Thread from './Thread';
 
+const THREAD_REFRESH_INTERVAL = 30000;
+
 class Threads extends Component {
-  constructor() {
-    super();
-    this.threadOnClicked = this.threadOnClicked.bind(this);
-  }
-  threadOnClicked(index) {
+  constructor(props) {
+    super(props);
     const { dispatch } = this.props;
-    dispatch(selectThread(index));
+    this.threadOnClicked = (index) => dispatch(selectThread(index));
+  }
+  componentDidMount() {
+    setInterval(() => this.forceUpdate(), THREAD_REFRESH_INTERVAL);
   }
   render() {
     const { currentThreadIndex, threads } = this.props;
@@ -27,9 +30,7 @@ class Threads extends Component {
     );
     return (
       <div id="threads">
-        <div id="threads-header">
-          <p>Conversations</p>
-        </div>
+        <div id="threads-header"><p>Conversations</p></div>
         <ul id="threads-body" className="mdl-list">
           <Thread
             key={NEW_MESSAGE_INDEX}

@@ -13,7 +13,7 @@ export default (state = initialState, action) => {
     case types.SIGNED_OUT:
       return initialState;
 
-    case types.FLUSH_DATA:
+    case types.CLEAR_MESSAGES:
       return initialState;
 
     case types.THREAD_SELECTED:

@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-export default class LinkedDevice extends Component {
+class LinkedDevice extends Component {
   componentDidMount() {
     componentHandler.upgradeAllRegistered();
   }
@@ -40,3 +40,5 @@ LinkedDevice.propTypes = {
     created_at: PropTypes.number,
   }),
 };
+
+export default LinkedDevice;

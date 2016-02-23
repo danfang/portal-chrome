@@ -41,7 +41,6 @@ export function syncMessages() {
     const lastMessage = state.messages.lastMessage;
     const credentials = state.login.credentials;
     const encryptionKey = state.devices.encryptionKey;
-
     // If we have a latest message, sync messages
     if (lastMessage) {
       return fetch(`${syncMessagesEndpoint}/${lastMessage.mid}`,
@@ -65,17 +64,21 @@ export function sendMessage(input, gcm = chrome.gcm) {
       type: 'message',
       payload: JSON.stringify(payload),
     };
-
     dispatch(sendingMessage(message));
-
-    // Send to other devices via GCM
     gcm.send(gcmMessage(notificationKey, data), () => {
-      // Send to GCM server upstream
       gcm.send(gcmMessage(gcmUpstream, data), () => {
         dispatch(sentMessage(message.mid));
       });
     });
   };
+}
+
+export function clearMessages() {
+  return { type: types.CLEAR_MESSAGES };
+}
+
+export function selectThread(index) {
+  return { type: types.THREAD_SELECTED, index };
 }
 
 function makeMessage(to, body) {
@@ -122,8 +125,4 @@ function sentMessage(mid) {
 
 function newMessages(messages, encryptionKey) {
   return { type: types.MESSAGES_RECEIVED, messages, encryptionKey };
-}
-
-export function selectThread(index) {
-  return { type: types.THREAD_SELECTED, index };
 }

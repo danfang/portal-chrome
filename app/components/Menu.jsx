@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import NativeListener from 'react-native-listener';
 
-export default class Menu extends Component {
+class Menu extends Component {
   render() {
     const { signOutOnClick } = this.props;
     return (
@@ -23,3 +23,5 @@ export default class Menu extends Component {
 Menu.propTypes = {
   signOutOnClick: PropTypes.func.isRequired,
 };
+
+export default Menu;
