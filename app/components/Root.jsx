@@ -5,6 +5,12 @@ import App from './App';
 import Login from './Login';
 
 export class Root extends Component {
+  componentDidMount() {
+    componentHandler.upgradeAllRegistered();
+  }
+  componentDidUpdate() {
+    componentHandler.upgradeAllRegistered();
+  }
   render() {
     return this.props.loggedIn ? <App /> : <Login />;
   }

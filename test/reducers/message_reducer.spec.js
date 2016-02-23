@@ -26,8 +26,8 @@ describe('message_reducer', () => {
     reducer({}, { type: types.SIGNED_OUT }).should.deep.equal(initialState);
   });
 
-  it('should return the initial state on flushing data', () => {
-    reducer({}, { type: types.FLUSH_DATA }).should.deep.equal(initialState);
+  it('should return the initial state on clearing messages', () => {
+    reducer({}, { type: types.CLEAR_MESSAGES }).should.deep.equal(initialState);
   });
 });
 

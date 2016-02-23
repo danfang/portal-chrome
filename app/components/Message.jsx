@@ -19,7 +19,7 @@ class Message extends Component {
     const { message } = this.props;
     const statusIcon = getStatusIcon(message.status);
     return (
-      <div id={message.mid} className="message demo-card-square mdl-card mdl-shadow--2dp">
+      <div id={message.mid} className="message mdl-card mdl-shadow--2dp">
         <div className="mdl-card__supporting-text">
           { message.body }
         </div>

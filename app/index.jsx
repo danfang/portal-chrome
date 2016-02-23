@@ -18,5 +18,5 @@ chrome.storage.local.get(['store'], (result) => {
   );
   setInterval(() => {
     chrome.storage.local.set({ store: store.getState() });
-  }, 10000);
+  }, 2500);
 });

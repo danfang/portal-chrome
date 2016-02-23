@@ -1,9 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
 class LinkedDevice extends Component {
-  componentDidMount() {
-    componentHandler.upgradeAllRegistered();
-  }
   render() {
     const { device } = this.props;
     let deviceType = null;

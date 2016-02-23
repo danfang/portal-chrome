@@ -1,11 +1,17 @@
 import React, { Component, PropTypes } from 'react';
 import NativeListener from 'react-native-listener';
+import { connect } from 'react-redux';
 
+import { clearMessages } from '../actions/message_actions';
+
+import MaterialHeader from './material/Header';
 import DeviceList from './DeviceList';
 
 class Header extends Component {
-  componentDidUpdate() {
-    componentHandler.upgradeAllRegistered();
+  constructor(props) {
+    super(props);
+    const { dispatch } = this.props;
+    this.clearMessages = () => dispatch(clearMessages());
   }
   getStatusElements() {
     const { registered, registerInProgress } = this.props;
@@ -26,8 +32,13 @@ class Header extends Component {
     };
   }
   render() {
-    const { linkedDevices, isLinkedToPhone } = this.props;
+    const { linkedDevices } = this.props;
     const { statusDescription, statusIcon } = this.getStatusElements();
+
+    const isLinkedToPhone = linkedDevices.find(device =>
+      device && device.type === 'phone'
+    ) !== undefined;
+
     const noPhoneLinked = isLinkedToPhone ? '' : (
       <a id="alert-no-phone" className="mdl-navigation__link" href="#">
         <i className="material-icons">phonelink_erase</i>
@@ -37,40 +48,42 @@ class Header extends Component {
       </a>
     );
     return (
-      <header id="app-header" className="mdl-layout__header">
-      <div className="mdl-layout__header-row">
-        <span className="mdl-layout-title">Portal Messaging</span>
-        <div className="mdl-layout-spacer"></div>
-        <nav className="mdl-navigation">
-          { noPhoneLinked }
-          <a id="alert-registration-status" className="mdl-navigation__link" href="#">
-            <div className="mdl-tooltip mdl-tooltip--large" htmlFor="alert-registration-status">
-              { statusDescription }
+      <MaterialHeader id="app-header" title={'Portal Messaging'}>
+        { noPhoneLinked }
+        <a id="alert-registration-status" className="mdl-navigation__link" href="#">
+          <div className="mdl-tooltip mdl-tooltip--large" htmlFor="alert-registration-status">
+            { statusDescription }
+          </div>
+          { statusIcon }
+        </a>
+        <NativeListener onClick={this.clearMessages}>
+          <a id="clear-messages" className="mdl-navigation__link" href="#">
+            <div className="mdl-tooltip mdl-tooltip--large" htmlFor="clear-messages">
+              Clear all messages
             </div>
-            { statusIcon }
+            <i className="material-icons">clear</i>
           </a>
-          <NativeListener onClick={this.props.clearMessagesOnClick}>
-            <a id="clear-messages" className="mdl-navigation__link" href="#">
-              <div className="mdl-tooltip mdl-tooltip--large" htmlFor="clear-messages">
-                Clear all messages
-              </div>
-              <i className="material-icons">clear</i>
-            </a>
-          </NativeListener>
-          <DeviceList linkedDevices={linkedDevices} />
-        </nav>
-      </div>
-      </header>
+        </NativeListener>
+        <DeviceList linkedDevices={linkedDevices} />
+      </MaterialHeader>
     );
   }
 }
 
 Header.propTypes = {
   linkedDevices: PropTypes.array.isRequired,
-  isLinkedToPhone: PropTypes.bool.isRequired,
   registered: PropTypes.bool.isRequired,
   registerInProgress: PropTypes.bool.isRequired,
-  clearMessagesOnClick: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
-export default Header;
+const mapStateToProps = (state) => {
+  const { devices } = state;
+  return {
+    linkedDevices: devices.linkedDevices,
+    registered: devices.registered,
+    registerInProgress: devices.registerInProgress,
+  };
+};
+
+export default connect(mapStateToProps)(Header);

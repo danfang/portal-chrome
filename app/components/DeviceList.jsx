@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 
 import LinkedDevice from './LinkedDevice';
+import ListMenu from './material/ListMenu';
+import Button from './material/Button';
 
 class DeviceList extends Component {
   render() {
@@ -10,16 +12,13 @@ class DeviceList extends Component {
     );
     return (
       <div>
-        <div id="device-list-menu" className="mdl-button mdl-js-button">
+        <Button id="device-list-menu">
           <span style={{ color: 'white' }} className="link-description">My Devices</span>
           <i style={{ color: 'white' }} className="material-icons">devices</i>
-        </div>
-        <ul
-          className="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
-          htmlFor="device-list-menu"
-        >
+        </Button>
+        <ListMenu for={'device-list-menu'}>
           { deviceElements }
-        </ul>
+        </ListMenu>
       </div>
     );
   }

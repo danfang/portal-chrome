@@ -17,12 +17,6 @@ export class Login extends Component {
     const { dispatch } = this.props;
     this.signIn = () => dispatch(googleSignIn());
   }
-  componentDidMount() {
-    componentHandler.upgradeAllRegistered();
-  }
-  componentDidUpdate() {
-    componentHandler.upgradeAllRegistered();
-  }
   render() {
     const { inProgress, error } = this.props;
     const statusIcon = getStatusIcon(inProgress, error);

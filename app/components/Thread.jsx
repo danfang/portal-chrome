@@ -23,13 +23,10 @@ class Thread extends Component {
     let to = 'New Message';
     let messagePreview = '';
     if (index !== NEW_MESSAGE_INDEX) {
-      to = thread.contact;
       const lastMessage = thread.messages[thread.messages.length - 1];
+      to = thread.contact;
       time = moment(lastMessage.at * 1000).fromNow();
-      messagePreview = lastMessage.body.substring(0, maxMessagePreviewLength);
-      if (messagePreview.length === maxMessagePreviewLength) {
-        messagePreview = `${messagePreview.trim()}...`;
-      }
+      messagePreview = lastMessage.body.substring(0, maxMessagePreviewLength).trim();
     }
     return (
       <NativeListener onClick={this.onClick}>
@@ -56,8 +53,7 @@ Thread.propTypes = {
   selected: PropTypes.bool.isRequired,
   thread: PropTypes.shape({
     contact: PropTypes.object.isRequired,
-    phoneNumber: PropTypes.string,
-    messages: PropTypes.array,
+    messages: PropTypes.array.isRequired,
     messageInput: PropTypes.string,
   }),
 };
