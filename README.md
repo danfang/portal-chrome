@@ -1,6 +1,8 @@
 Portal Chrome Extension
 ==
 
+[![Build Status](https://build.portalmessaging.com/api/badges/danfang/portal-chrome/status.svg)](https://build.portalmessaging.com/danfang/portal-chrome)
+
 This is a client for the Portal Messaging service. It leverages GCM and Google OAuth to connect
 register and sign into the Portal service.
 
